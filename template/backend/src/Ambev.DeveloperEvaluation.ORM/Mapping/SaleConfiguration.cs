@@ -13,6 +13,7 @@ public class SaleConfiguration : IEntityTypeConfiguration<Sale>
         builder.HasKey(sale => sale.Id);
         builder.Property(sale => sale.Id)
             .HasColumnType("uuid")
+            .ValueGeneratedNever()
             .HasDefaultValueSql("gen_random_uuid()");
 
         builder.Property(sale => sale.SaleNumber)
@@ -101,5 +102,10 @@ public class SaleConfiguration : IEntityTypeConfiguration<Sale>
         builder.HasIndex(sale => sale.CustomerId);
         builder.HasIndex(sale => sale.CompanyId);
         builder.HasIndex(sale => sale.Status);
+
+        builder.HasMany(sale => sale.Items)
+            .WithOne(item => item.Sale)
+            .HasForeignKey(item => item.IdSales)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

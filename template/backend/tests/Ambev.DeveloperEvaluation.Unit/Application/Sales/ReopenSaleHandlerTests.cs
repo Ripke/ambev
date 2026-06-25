@@ -17,6 +17,7 @@ public class ReopenSaleHandlerTests
         var mapper = Substitute.For<IMapper>();
         var handler = new ReopenSaleHandler(repository, mapper);
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
+        sale.AddItem("789", Guid.NewGuid(), "Produto", 2, 10);
         sale.Subtotalize();
         var result = new ReopenSaleResult();
         var command = new ReopenSaleCommand { Id = sale.Id, Version = sale.Version };

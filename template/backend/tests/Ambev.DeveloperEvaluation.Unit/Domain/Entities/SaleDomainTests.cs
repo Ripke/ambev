@@ -24,6 +24,7 @@ public class SaleDomainTests
     public void Subtotalize_ShouldChangeStatusAndRenewVersion()
     {
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
+        sale.AddItem("789", Guid.NewGuid(), "Produto", 2, 10);
         var previousVersion = sale.Version;
 
         sale.DequeueEvents();
@@ -38,6 +39,7 @@ public class SaleDomainTests
     public void Reopen_ShouldChangeStatusBackToOpen()
     {
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
+        sale.AddItem("789", Guid.NewGuid(), "Produto", 2, 10);
         sale.Subtotalize();
 
         sale.DequeueEvents();
@@ -70,6 +72,57 @@ public class SaleDomainTests
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
 
         var act = () => sale.Reopen();
+
+        act.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void AddItem_ShouldRecalculateSaleTotals()
+    {
+        var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
+
+        var item = sale.AddItem("789", Guid.NewGuid(), "Produto", 3, 5);
+
+        item.Subtotal.Should().Be(15);
+        item.Total.Should().Be(15);
+        item.SaleDateTime.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5));
+        sale.Subtotal.Should().Be(15);
+        sale.Total.Should().Be(15);
+    }
+
+    [Fact]
+    public void CancelItem_ShouldKeepItemValuesAndExcludeFromSaleTotals()
+    {
+        var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
+        var item = sale.AddItem("789", Guid.NewGuid(), "Produto", 3, 5);
+
+        sale.CancelItem(item.Id, Guid.NewGuid(), "Manager", "Motivo");
+
+        item.IsCanceled.Should().BeTrue();
+        item.Subtotal.Should().Be(15);
+        item.Total.Should().Be(15);
+        sale.Subtotal.Should().Be(0);
+        sale.Total.Should().Be(0);
+    }
+
+    [Fact]
+    public void CancelItem_Twice_ShouldThrow()
+    {
+        var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
+        var item = sale.AddItem("789", Guid.NewGuid(), "Produto", 3, 5);
+        sale.CancelItem(item.Id, Guid.NewGuid(), "Manager", "Motivo");
+
+        var act = () => sale.CancelItem(item.Id, Guid.NewGuid(), "Manager", "Motivo");
+
+        act.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void Subtotalize_WithoutActiveItems_ShouldThrow()
+    {
+        var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
+
+        var act = () => sale.Subtotalize();
 
         act.Should().Throw<InvalidOperationException>();
     }

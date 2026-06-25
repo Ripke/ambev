@@ -35,6 +35,8 @@ public class Program
                     builder.Configuration.GetConnectionString("DefaultConnection"),
                     b => b.MigrationsAssembly("Ambev.DeveloperEvaluation.ORM")
                 )
+                 .EnableSensitiveDataLogging()
+                 .LogTo(Console.WriteLine, LogLevel.Information)
             );
 
             builder.Services.AddJwtAuthentication(builder.Configuration);

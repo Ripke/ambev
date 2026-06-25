@@ -26,6 +26,17 @@ public class ProductPriceRepository : IProductPriceRepository
         return _context.ProductPrices.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
+    public Task<ProductPrice?> GetCurrentPriceByProductIdAsync(Guid productId, PriceType priceType, DateTime asOf, CancellationToken cancellationToken = default)
+    {
+        return _context.ProductPrices
+            .Where(x => x.ProductId == productId
+                && x.PriceType == priceType
+                && x.EffectiveStartAt <= asOf
+                && asOf < x.EffectiveEndAt)
+            .OrderByDescending(x => x.EffectiveStartAt)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task<IReadOnlyList<ProductPrice>> ListByProductIdAsync(Guid productId, CancellationToken cancellationToken = default)
     {
         return await _context.ProductPrices

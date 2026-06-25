@@ -7,6 +7,7 @@ public interface IProductPriceRepository
 {
     Task<ProductPrice> CreateAsync(ProductPrice price, CancellationToken cancellationToken = default);
     Task<ProductPrice?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<ProductPrice?> GetCurrentPriceByProductIdAsync(Guid productId, PriceType priceType, DateTime asOf, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<ProductPrice>> ListByProductIdAsync(Guid productId, CancellationToken cancellationToken = default);
     Task DeleteAsync(ProductPrice price, CancellationToken cancellationToken = default);
     Task<bool> HasOverlappingPriceAsync(

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System.Reflection;
 
 namespace Ambev.DeveloperEvaluation.ORM;
@@ -12,6 +13,7 @@ public class DefaultContext : DbContext
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Company> Companies { get; set; }
     public DbSet<Sale> Sales { get; set; }
+    public DbSet<SaleItem> SaleItems { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductBarcode> ProductBarcodes { get; set; }
     public DbSet<ProductPrice> ProductPrices { get; set; }
@@ -44,7 +46,8 @@ public class YourDbContextFactory : IDesignTimeDbContextFactory<DefaultContext>
         builder.UseNpgsql(
                connectionString,
                b => b.MigrationsAssembly("Ambev.DeveloperEvaluation.ORM")
-        );
+        ).EnableSensitiveDataLogging()
+                 .LogTo(Console.WriteLine, LogLevel.Information);
 
         return new DefaultContext(builder.Options);
     }

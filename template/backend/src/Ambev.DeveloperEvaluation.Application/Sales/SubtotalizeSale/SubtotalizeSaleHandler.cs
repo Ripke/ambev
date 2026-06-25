@@ -40,7 +40,18 @@ public class SubtotalizeSaleHandler : IRequestHandler<SubtotalizeSaleCommand, Su
             });
         }
 
-        sale.Subtotalize();
+        try
+        {
+            sale.Subtotalize();
+        }
+        catch (InvalidOperationException ex)
+        {
+            throw new ValidationException(new[]
+            {
+                new ValidationFailure(nameof(request.Id), ex.Message)
+            });
+        }
+
         await _saleRepository.SaveChangesAsync(cancellationToken);
 
         return _mapper.Map<SubtotalizeSaleResult>(sale);

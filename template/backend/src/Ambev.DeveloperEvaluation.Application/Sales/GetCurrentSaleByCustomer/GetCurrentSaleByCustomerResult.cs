@@ -26,4 +26,5 @@ public class GetCurrentSaleByCustomerResult
     public string CompanyName { get; set; } = string.Empty;
     public Guid CustomerId { get; set; }
     public string CustomerName { get; set; } = string.Empty;
+    public List<SaleItemResult> Items { get; set; } = [];
 }

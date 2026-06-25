@@ -1,16 +1,22 @@
 using Ambev.DeveloperEvaluation.Application.Sales.CancelSale;
+using Ambev.DeveloperEvaluation.Application.Sales.CancelSaleItem;
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.Application.Sales.GetCurrentSaleByCustomer;
 using Ambev.DeveloperEvaluation.Application.Sales.GetSale;
 using Ambev.DeveloperEvaluation.Application.Sales.ReopenSale;
 using Ambev.DeveloperEvaluation.Application.Sales.SubtotalizeSale;
+using Ambev.DeveloperEvaluation.Application.Sales.AddSaleItem;
+using Ambev.DeveloperEvaluation.Application.Sales.UpdateSaleItemQuantity;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.AddSaleItem;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CancelSale;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CancelSaleItem;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetCurrentSaleByCustomer;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.ReopenSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.SubtotalizeSale;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.UpdateSaleItemQuantity;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -97,6 +103,80 @@ public class SalesController : BaseController
             Success = true,
             Message = "Current sale retrieved successfully",
             Data = _mapper.Map<GetCurrentSaleByCustomerResponse>(response)
+        });
+    }
+
+    [HttpPost("{saleId}/items")]
+    [ProducesResponseType(typeof(ApiResponseWithData<AddSaleItemResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> AddSaleItem([FromRoute] Guid saleId, [FromBody] AddSaleItemRequest request, CancellationToken cancellationToken)
+    {
+        request.SaleId = saleId;
+        var validator = new AddSaleItemRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+
+        var command = _mapper.Map<AddSaleItemCommand>(request);
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return Ok(new ApiResponseWithData<AddSaleItemResponse>
+        {
+            Success = true,
+            Message = "Sale item added successfully",
+            Data = _mapper.Map<AddSaleItemResponse>(response)
+        });
+    }
+
+    [HttpPut("{saleId}/items/{itemId}/quantity")]
+    [ProducesResponseType(typeof(ApiResponseWithData<UpdateSaleItemQuantityResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateSaleItemQuantity([FromRoute] Guid saleId, [FromRoute] Guid itemId, [FromBody] UpdateSaleItemQuantityRequest request, CancellationToken cancellationToken)
+    {
+        request.SaleId = saleId;
+        request.ItemId = itemId;
+        var validator = new UpdateSaleItemQuantityRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+
+        var command = _mapper.Map<UpdateSaleItemQuantityCommand>(request);
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return Ok(new ApiResponseWithData<UpdateSaleItemQuantityResponse>
+        {
+            Success = true,
+            Message = "Sale item quantity updated successfully",
+            Data = _mapper.Map<UpdateSaleItemQuantityResponse>(response)
+        });
+    }
+
+    [HttpPost("{saleId}/items/{itemId}/cancel")]
+    [ProducesResponseType(typeof(ApiResponseWithData<CancelSaleItemResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> CancelSaleItem([FromRoute] Guid saleId, [FromRoute] Guid itemId, [FromBody] CancelSaleItemRequest request, CancellationToken cancellationToken)
+    {
+        request.SaleId = saleId;
+        request.ItemId = itemId;
+        var validator = new CancelSaleItemRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+
+        var command = _mapper.Map<CancelSaleItemCommand>(request);
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return Ok(new ApiResponseWithData<CancelSaleItemResponse>
+        {
+            Success = true,
+            Message = "Sale item canceled successfully",
+            Data = _mapper.Map<CancelSaleItemResponse>(response)
         });
     }
 

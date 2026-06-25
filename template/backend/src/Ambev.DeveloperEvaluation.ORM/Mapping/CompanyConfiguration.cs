@@ -13,6 +13,7 @@ public class CompanyConfiguration : IEntityTypeConfiguration<Company>
         builder.HasKey(company => company.Id);
         builder.Property(company => company.Id)
             .HasColumnType("uuid")
+            .ValueGeneratedNever()
             .HasDefaultValueSql("gen_random_uuid()");
 
         builder.Property(company => company.Name)

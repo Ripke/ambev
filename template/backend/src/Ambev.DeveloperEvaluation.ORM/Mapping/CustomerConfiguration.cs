@@ -13,6 +13,7 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         builder.HasKey(customer => customer.Id);
         builder.Property(customer => customer.Id)
             .HasColumnType("uuid")
+            .ValueGeneratedNever()
             .HasDefaultValueSql("gen_random_uuid()");
 
         builder.Property(customer => customer.FullName)

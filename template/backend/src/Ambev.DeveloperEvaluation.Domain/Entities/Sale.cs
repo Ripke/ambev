@@ -29,6 +29,7 @@ public class Sale : BaseEntity
     public string CompanyName { get; private set; } = string.Empty;
     public Guid CustomerId { get; private set; }
     public string CustomerName { get; private set; } = string.Empty;
+    public List<SaleItem> Items { get; private set; } = [];
 
     public static readonly SaleStatus[] CurrentStatuses =
     {
@@ -78,6 +79,10 @@ public class Sale : BaseEntity
     public void Subtotalize()
     {
         EnsureStatus(SaleStatus.Open, "Only open sales can be subtotalized.");
+        if (!Items.Any(item => !item.IsCanceled))
+            throw new InvalidOperationException("Sale must have at least one active item before subtotalization.");
+
+        RecalculateTotals();
         ChangeStatus(SaleStatus.Subtotalized);
         AddEvent(new SaleSubtotalizedEvent(Id, StatusChangedDate));
     }
@@ -134,7 +139,55 @@ public class Sale : BaseEntity
 
     public void RecalculateTotals()
     {
-        throw new NotImplementedException("Sale.RecalculateTotals() is intentionally left as a placeholder.");
+        var activeItems = Items.Where(item => !item.IsCanceled).ToList();
+        Subtotal = activeItems.Sum(item => item.Subtotal);
+        AdditionalAmountTotal = activeItems.Sum(item => item.AdditionalAmountTotal);
+        DiscountAmountTotal = activeItems.Sum(item => item.DiscountAmountTotal);
+        Total = Subtotal + AdditionalAmountTotal - DiscountAmountTotal;
+    }
+
+    public SaleItem AddItem(
+        string productEan,
+        Guid productId,
+        string productName,
+        decimal quantity,
+        decimal unitPrice,
+        decimal additionalAmountTotal = 0,
+        decimal discountAmountTotal = 0)
+    {
+        EnsureItemChangesAllowed();
+
+        var sequentialNumber = Items.Count == 0 ? 1 : Items.Max(item => item.SequentialNumber) + 1;
+        var item = SaleItem.Create(
+            Id,
+            sequentialNumber,
+            productEan,
+            productId,
+            productName,
+            quantity,
+            unitPrice,
+            additionalAmountTotal,
+            discountAmountTotal);
+
+        Items.Add(item);
+        RecalculateTotals();
+        return item;
+    }
+
+    public void UpdateItemQuantity(Guid itemId, decimal quantity)
+    {
+        EnsureItemChangesAllowed();
+        var item = GetItemOrThrow(itemId);
+        item.UpdateQuantity(quantity);
+        RecalculateTotals();
+    }
+
+    public void CancelItem(Guid itemId, Guid authorizerId, string authorizerName, string? reason)
+    {
+        EnsureItemChangesAllowed();
+        var item = GetItemOrThrow(itemId);
+        item.Cancel(authorizerId, authorizerName, reason);
+        RecalculateTotals();
     }
 
     public ValidationResultDetail Validate()
@@ -178,6 +231,18 @@ public class Sale : BaseEntity
     {
         if (Status != expectedStatus)
             throw new InvalidOperationException(message);
+    }
+
+    private void EnsureItemChangesAllowed()
+    {
+        if (Status != SaleStatus.Open)
+            throw new InvalidOperationException("Items can only be changed while the sale is open.");
+    }
+
+    public SaleItem GetItemOrThrow(Guid itemId)
+    {
+        return Items.FirstOrDefault(item => item.Id == itemId)
+            ?? throw new KeyNotFoundException($"Item with ID {itemId} not found in sale.");
     }
 
     private void ValidateAndThrow()

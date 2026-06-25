@@ -13,6 +13,7 @@ public class ProductPriceConfiguration : IEntityTypeConfiguration<ProductPrice>
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id)
             .HasColumnType("uuid")
+            .ValueGeneratedNever()
             .HasDefaultValueSql("gen_random_uuid()");
 
         builder.Property(x => x.ProductId)

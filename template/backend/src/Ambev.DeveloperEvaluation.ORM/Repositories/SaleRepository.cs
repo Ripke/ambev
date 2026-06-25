@@ -23,12 +23,15 @@ public class SaleRepository : ISaleRepository
 
     public Task<Sale?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return _context.Sales.FirstOrDefaultAsync(sale => sale.Id == id, cancellationToken);
+        return _context.Sales
+            .Include(sale => sale.Items.OrderBy(item => item.SequentialNumber))
+            .FirstOrDefaultAsync(sale => sale.Id == id, cancellationToken);
     }
 
     public Task<Sale?> GetCurrentByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default)
     {
         return _context.Sales
+            .Include(sale => sale.Items.OrderBy(item => item.SequentialNumber))
             .Where(sale => sale.CustomerId == customerId
                 && sale.Status != SaleStatus.IntegratedWithErp
                 && sale.Status != SaleStatus.Canceled)
@@ -38,7 +41,9 @@ public class SaleRepository : ISaleRepository
 
     public Task<Sale?> GetBySaleNumberAsync(long saleNumber, CancellationToken cancellationToken = default)
     {
-        return _context.Sales.FirstOrDefaultAsync(sale => sale.SaleNumber == saleNumber, cancellationToken);
+        return _context.Sales
+            .Include(sale => sale.Items.OrderBy(item => item.SequentialNumber))
+            .FirstOrDefaultAsync(sale => sale.SaleNumber == saleNumber, cancellationToken);
     }
 
     public Task<bool> ExistsOpenSaleByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default)

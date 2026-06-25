@@ -26,4 +26,5 @@ public class GetSaleResponse
     public string CompanyName { get; set; } = string.Empty;
     public Guid CustomerId { get; set; }
     public string CustomerName { get; set; } = string.Empty;
+    public List<SaleItemResponse> Items { get; set; } = [];
 }
