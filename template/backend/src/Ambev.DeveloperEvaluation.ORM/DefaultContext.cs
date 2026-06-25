@@ -11,6 +11,7 @@ public class DefaultContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Company> Companies { get; set; }
+    public DbSet<Sale> Sales { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductBarcode> ProductBarcodes { get; set; }
     public DbSet<ProductPrice> ProductPrices { get; set; }
@@ -21,6 +22,9 @@ public class DefaultContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.HasSequence<long>("sales_numbers")
+            .StartsAt(1)
+            .IncrementsBy(1);
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         base.OnModelCreating(modelBuilder);
     }
