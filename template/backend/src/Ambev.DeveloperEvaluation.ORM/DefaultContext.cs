@@ -10,6 +10,7 @@ public class DefaultContext : DbContext
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Customer> Customers { get; set; }
+    public DbSet<Company> Companies { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductBarcode> ProductBarcodes { get; set; }
     public DbSet<ProductPrice> ProductPrices { get; set; }
