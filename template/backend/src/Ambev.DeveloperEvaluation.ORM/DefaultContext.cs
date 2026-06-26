@@ -14,6 +14,8 @@ public class DefaultContext : DbContext
     public DbSet<Company> Companies { get; set; }
     public DbSet<Sale> Sales { get; set; }
     public DbSet<SaleItem> SaleItems { get; set; }
+    public DbSet<SalePayment> SalesPayments { get; set; }
+    public DbSet<SaleChange> SalesChanges { get; set; }
     public DbSet<SalesItemDiscount> SalesItemDiscounts { get; set; }
     public DbSet<SalesItemAddition> SalesItemAdditions { get; set; }
     public DbSet<Product> Products { get; set; }

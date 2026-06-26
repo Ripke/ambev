@@ -1,8 +1,8 @@
 using Ambev.DeveloperEvaluation.Domain.Enums;
 
-namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.RegisterSalePayment;
 
-public class CreateSaleResult
+public class RegisterSalePaymentResponse
 {
     public Guid Id { get; set; }
     public long SaleNumber { get; set; }
@@ -26,7 +26,7 @@ public class CreateSaleResult
     public string CompanyName { get; set; } = string.Empty;
     public Guid CustomerId { get; set; }
     public string CustomerName { get; set; } = string.Empty;
-    public List<SaleItemResult> Items { get; set; } = [];
-    public List<SalePaymentResult> Payments { get; set; } = [];
-    public List<SaleChangeResult> Changes { get; set; } = [];
+    public List<SaleItemResponse> Items { get; set; } = [];
+    public List<SalePaymentResponse> Payments { get; set; } = [];
+    public List<SaleChangeResponse> Changes { get; set; } = [];
 }

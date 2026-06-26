@@ -107,5 +107,15 @@ public class SaleConfiguration : IEntityTypeConfiguration<Sale>
             .WithOne(item => item.Sale)
             .HasForeignKey(item => item.IdSales)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(sale => sale.Payments)
+            .WithOne(payment => payment.Sale)
+            .HasForeignKey(payment => payment.IdSales)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(sale => sale.Changes)
+            .WithOne(change => change.Sale)
+            .HasForeignKey(change => change.IdSales)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

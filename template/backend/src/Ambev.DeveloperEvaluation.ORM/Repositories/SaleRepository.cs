@@ -28,6 +28,8 @@ public class SaleRepository : ISaleRepository
                 .ThenInclude(item => item.Discounts)
             .Include(sale => sale.Items.OrderBy(item => item.SequentialNumber))
                 .ThenInclude(item => item.Additions)
+            .Include(sale => sale.Payments.OrderBy(payment => payment.PaidAt))
+            .Include(sale => sale.Changes.OrderBy(change => change.ChangedAt))
             .FirstOrDefaultAsync(sale => sale.Id == id, cancellationToken);
     }
 
@@ -38,6 +40,8 @@ public class SaleRepository : ISaleRepository
                 .ThenInclude(item => item.Discounts)
             .Include(sale => sale.Items.OrderBy(item => item.SequentialNumber))
                 .ThenInclude(item => item.Additions)
+            .Include(sale => sale.Payments.OrderBy(payment => payment.PaidAt))
+            .Include(sale => sale.Changes.OrderBy(change => change.ChangedAt))
             .Where(sale => sale.CustomerId == customerId
                 && sale.Status != SaleStatus.IntegratedWithErp
                 && sale.Status != SaleStatus.Canceled)
@@ -52,6 +56,8 @@ public class SaleRepository : ISaleRepository
                 .ThenInclude(item => item.Discounts)
             .Include(sale => sale.Items.OrderBy(item => item.SequentialNumber))
                 .ThenInclude(item => item.Additions)
+            .Include(sale => sale.Payments.OrderBy(payment => payment.PaidAt))
+            .Include(sale => sale.Changes.OrderBy(change => change.ChangedAt))
             .FirstOrDefaultAsync(sale => sale.SaleNumber == saleNumber, cancellationToken);
     }
 

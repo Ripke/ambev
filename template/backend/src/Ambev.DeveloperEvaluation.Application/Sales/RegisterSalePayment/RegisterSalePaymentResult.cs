@@ -1,8 +1,8 @@
 using Ambev.DeveloperEvaluation.Domain.Enums;
 
-namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
+namespace Ambev.DeveloperEvaluation.Application.Sales.RegisterSalePayment;
 
-public class CreateSaleResult
+public class RegisterSalePaymentResult
 {
     public Guid Id { get; set; }
     public long SaleNumber { get; set; }

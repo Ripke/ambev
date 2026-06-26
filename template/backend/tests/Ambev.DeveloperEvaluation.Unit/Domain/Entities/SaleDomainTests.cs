@@ -186,4 +186,53 @@ public class SaleDomainTests
 
         act.Should().Throw<InvalidOperationException>();
     }
+
+    [Fact]
+    public void RegisterPayment_FirstPartialPayment_ShouldMoveSaleToPaymentCompleted()
+    {
+        var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
+        sale.AddItem("789", Guid.NewGuid(), "Produto", 2, 10);
+        sale.Subtotalize();
+
+        sale.RegisterPayment(PaymentType.Cash, 5);
+
+        sale.Status.Should().Be(SaleStatus.PaymentCompleted);
+        sale.PaymentAmountTotal.Should().Be(5);
+        sale.ChangeAmountTotal.Should().Be(0);
+        sale.Payments.Should().ContainSingle();
+        sale.Version.Should().NotBe(Guid.Empty);
+    }
+
+    [Fact]
+    public void RegisterPayment_FinalCashPaymentWithChange_ShouldGenerateChangeAndEmitNfce()
+    {
+        var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
+        sale.AddItem("789", Guid.NewGuid(), "Produto", 2, 50);
+        sale.Subtotalize();
+
+        sale.RegisterPayment(PaymentType.Cash, 20);
+        sale.RegisterPayment(PaymentType.CreditCard, 5);
+        sale.RegisterPayment(PaymentType.DebitCard, 12);
+        sale.RegisterPayment(PaymentType.Cash, 80);
+
+        sale.Status.Should().Be(SaleStatus.EmittingNfce);
+        sale.PaymentAmountTotal.Should().Be(117);
+        sale.ChangeAmountTotal.Should().Be(17);
+        sale.Payments.Should().HaveCount(4);
+        sale.Changes.Should().ContainSingle();
+        sale.Changes[0].Value.Should().Be(17);
+    }
+
+    [Fact]
+    public void RegisterPayment_NonCashOverpayment_ShouldThrow()
+    {
+        var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
+        sale.AddItem("789", Guid.NewGuid(), "Produto", 2, 50);
+        sale.Subtotalize();
+        sale.RegisterPayment(PaymentType.Cash, 95);
+
+        var act = () => sale.RegisterPayment(PaymentType.CreditCard, 10);
+
+        act.Should().Throw<InvalidOperationException>();
+    }
 }

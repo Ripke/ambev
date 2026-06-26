@@ -1,7 +1,7 @@
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 
-namespace Ambev.DeveloperEvaluation.Application.Sales.AcrescimoDesconto;
+namespace Ambev.DeveloperEvaluation.Application.Sales.AdditionDiscount;
 
 public class AdditionManualStrategy : IAdditionDiscountStrategy
 {

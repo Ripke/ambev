@@ -27,4 +27,6 @@ public class GetCurrentSaleByCustomerResponse
     public Guid CustomerId { get; set; }
     public string CustomerName { get; set; } = string.Empty;
     public List<SaleItemResponse> Items { get; set; } = [];
+    public List<SalePaymentResponse> Payments { get; set; } = [];
+    public List<SaleChangeResponse> Changes { get; set; } = [];
 }

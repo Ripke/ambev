@@ -4,7 +4,7 @@ using Ambev.DeveloperEvaluation.Domain.Repositories;
 using FluentValidation;
 using FluentValidation.Results;
 
-namespace Ambev.DeveloperEvaluation.Application.Sales.AcrescimoDesconto;
+namespace Ambev.DeveloperEvaluation.Application.Sales.AdditionDiscount;
 
 public class ServiceAdditionDiscount : IServiceAdditionDiscount
 {

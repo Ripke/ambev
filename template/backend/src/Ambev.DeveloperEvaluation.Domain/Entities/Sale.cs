@@ -30,6 +30,8 @@ public class Sale : BaseEntity
     public Guid CustomerId { get; private set; }
     public string CustomerName { get; private set; } = string.Empty;
     public List<SaleItem> Items { get; private set; } = [];
+    public List<SalePayment> Payments { get; private set; } = [];
+    public List<SaleChange> Changes { get; private set; } = [];
 
     public static readonly SaleStatus[] CurrentStatuses =
     {
@@ -144,6 +146,53 @@ public class Sale : BaseEntity
         AdditionalAmountTotal = activeItems.Sum(item => item.AdditionalAmountTotal);
         DiscountAmountTotal = activeItems.Sum(item => item.DiscountAmountTotal);
         Total = Subtotal + AdditionalAmountTotal - DiscountAmountTotal;
+    }
+
+    public void RegisterPayment(PaymentType typePayment, decimal value)
+    {
+        if (Status != SaleStatus.Subtotalized && Status != SaleStatus.PaymentCompleted)
+            throw new InvalidOperationException("Payments can only be registered for subtotalized or payment pending sales.");
+
+        if (typePayment == PaymentType.Unknown)
+            throw new ArgumentException("Payment type is required.", nameof(typePayment));
+
+        if (value <= 0)
+            throw new ArgumentException("Payment value must be greater than zero.", nameof(value));
+
+        var roundedValue = decimal.Round(value, 2, MidpointRounding.AwayFromZero);
+        var previousPaymentTotal = PaymentAmountTotal;
+        var newPaymentTotal = decimal.Round(previousPaymentTotal + roundedValue, 2, MidpointRounding.AwayFromZero);
+        var changeAmount = decimal.Round(Math.Max(0, newPaymentTotal - Total), 2, MidpointRounding.AwayFromZero);
+
+        if (changeAmount > 0 && typePayment != PaymentType.Cash)
+            throw new InvalidOperationException("Only cash payments can exceed the sale total.");
+
+        Payments.Add(SalePayment.Create(Id, typePayment, roundedValue));
+        PaymentAmountTotal = newPaymentTotal;
+
+        if (changeAmount > 0)
+        {
+            Changes.Add(SaleChange.Create(Id, PaymentType.Cash, changeAmount));
+        }
+
+        ChangeAmountTotal = changeAmount;
+
+        if (Status == SaleStatus.Subtotalized && previousPaymentTotal == 0 && newPaymentTotal < Total)
+        {
+            ChangeStatus(SaleStatus.PaymentCompleted);
+            return;
+        }
+
+        if (newPaymentTotal >= Total)
+        {
+            if (Status == SaleStatus.Subtotalized)
+                ChangeStatus(SaleStatus.PaymentCompleted);
+
+            StartNfceEmission();
+            return;
+        }
+
+        ChangeStatus(SaleStatus.PaymentCompleted);
     }
 
     public SaleItem AddItem(

@@ -35,4 +35,28 @@ public class SaleReadMappingTests
         result.Items[0].Total.Should().Be(23);
         result.Total.Should().Be(23);
     }
+
+    [Fact]
+    public void GetSaleMapping_ShouldIncludePaymentsAndChanges()
+    {
+        var mapper = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<SaleItemProfile>();
+            cfg.AddProfile<GetSaleProfile>();
+        }).CreateMapper();
+
+        var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
+        sale.AddItem("789", Guid.NewGuid(), "Produto", 2, 50);
+        sale.Subtotalize();
+        sale.RegisterPayment(PaymentType.Cash, 120);
+
+        var result = mapper.Map<GetSaleResult>(sale);
+
+        result.Payments.Should().ContainSingle();
+        result.Changes.Should().ContainSingle();
+        result.Payments[0].Value.Should().Be(120);
+        result.Changes[0].Value.Should().Be(20);
+        result.ChangeAmountTotal.Should().Be(20);
+        result.Status.Should().Be(SaleStatus.EmittingNfce);
+    }
 }

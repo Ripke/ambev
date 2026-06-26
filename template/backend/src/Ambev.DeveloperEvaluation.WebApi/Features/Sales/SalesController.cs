@@ -4,6 +4,7 @@ using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.Application.Sales.GetCurrentSaleByCustomer;
 using Ambev.DeveloperEvaluation.Application.Sales.GetSale;
 using Ambev.DeveloperEvaluation.Application.Sales.ReopenSale;
+using Ambev.DeveloperEvaluation.Application.Sales.RegisterSalePayment;
 using Ambev.DeveloperEvaluation.Application.Sales.SubtotalizeSale;
 using Ambev.DeveloperEvaluation.Application.Sales.AddSaleItem;
 using Ambev.DeveloperEvaluation.Application.Sales.ApplyManualSaleItemAddition;
@@ -19,6 +20,7 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetCurrentSaleByCustomer;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.ReopenSale;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.RegisterSalePayment;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.SubtotalizeSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.UpdateSaleItemQuantity;
 using AutoMapper;
@@ -131,6 +133,30 @@ public class SalesController : BaseController
             Success = true,
             Message = "Sale item added successfully",
             Data = _mapper.Map<AddSaleItemResponse>(response)
+        });
+    }
+
+    [HttpPost("{saleId}/payments")]
+    [ProducesResponseType(typeof(ApiResponseWithData<RegisterSalePaymentResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> RegisterSalePayment([FromRoute] Guid saleId, [FromBody] RegisterSalePaymentRequest request, CancellationToken cancellationToken)
+    {
+        request.SaleId = saleId;
+        var validator = new RegisterSalePaymentRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+
+        var command = _mapper.Map<RegisterSalePaymentCommand>(request);
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return Ok(new ApiResponseWithData<RegisterSalePaymentResponse>
+        {
+            Success = true,
+            Message = "Sale payment registered successfully",
+            Data = _mapper.Map<RegisterSalePaymentResponse>(response)
         });
     }
 
