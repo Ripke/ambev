@@ -8,7 +8,7 @@ public class RegisterSalePaymentCommand : IRequest<RegisterSalePaymentResult>
 {
     public Guid SaleId { get; set; }
     public Guid Version { get; set; }
-    public PaymentType TypePayment { get; set; }
+    public PaymentType PaymentType { get; set; }
     public decimal Value { get; set; }
 
     public ValidationResultDetail Validate()

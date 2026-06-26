@@ -2,7 +2,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales;
 
 public class SaleItemResult
 {
-    public Guid IdSales { get; set; }
+    public Guid SaleId { get; set; }
     public Guid Id { get; set; }
     public int SequentialNumber { get; set; }
     public string ProductEan { get; set; } = string.Empty;

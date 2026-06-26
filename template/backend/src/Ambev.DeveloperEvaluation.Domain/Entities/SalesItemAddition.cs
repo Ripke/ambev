@@ -5,13 +5,13 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
 public class SalesItemAddition : BaseEntity
 {
-    public Guid IdSalesItem { get; private set; }
-    public AdditionDiscountTypes Tipo { get; private set; }
-    public decimal Valor { get; private set; }
-    public Guid? AutorizadorId { get; private set; }
-    public string? AutorizadorName { get; private set; }
-    public string? Motivo { get; private set; }
-    public DateTime DataHora { get; private set; }
+    public Guid SaleItemId { get; private set; }
+    public SaleItemAdjustmentType AdjustmentType { get; private set; }
+    public decimal Amount { get; private set; }
+    public Guid? AuthorizerId { get; private set; }
+    public string? AuthorizerName { get; private set; }
+    public string? Reason { get; private set; }
+    public DateTime OccurredAt { get; private set; }
 
     public SaleItem SaleItem { get; private set; } = null!;
 
@@ -21,7 +21,7 @@ public class SalesItemAddition : BaseEntity
 
     public static SalesItemAddition Create(
         Guid saleItemId,
-        AdditionDiscountTypes tipo,
+        SaleItemAdjustmentType tipo,
         decimal valor,
         Guid? autorizadorId = null,
         string? autorizadorName = null,
@@ -33,7 +33,7 @@ public class SalesItemAddition : BaseEntity
         if (valor <= 0)
             throw new ArgumentException("Addition value must be greater than zero.", nameof(valor));
 
-        if (tipo == AdditionDiscountTypes.Manual)
+        if (tipo == SaleItemAdjustmentType.Manual)
         {
             if (autorizadorId == null || autorizadorId == Guid.Empty)
                 throw new ArgumentException("Addition authorizer is required for manual addition.", nameof(autorizadorId));
@@ -44,13 +44,13 @@ public class SalesItemAddition : BaseEntity
 
         return new SalesItemAddition
         {
-            IdSalesItem = saleItemId,
-            Tipo = tipo,
-            Valor = valor,
-            AutorizadorId = autorizadorId,
-            AutorizadorName = string.IsNullOrWhiteSpace(autorizadorName) ? null : autorizadorName.Trim(),
-            Motivo = string.IsNullOrWhiteSpace(motivo) ? null : motivo.Trim(),
-            DataHora = DateTime.UtcNow
+            SaleItemId = saleItemId,
+            AdjustmentType = tipo,
+            Amount = valor,
+            AuthorizerId = autorizadorId,
+            AuthorizerName = string.IsNullOrWhiteSpace(autorizadorName) ? null : autorizadorName.Trim(),
+            Reason = string.IsNullOrWhiteSpace(motivo) ? null : motivo.Trim(),
+            OccurredAt = DateTime.UtcNow
         };
     }
 }

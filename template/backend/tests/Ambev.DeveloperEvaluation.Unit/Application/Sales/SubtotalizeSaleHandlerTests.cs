@@ -78,7 +78,7 @@ public class SubtotalizeSaleHandlerTests
         var handler = new SubtotalizeSaleHandler(repository, promotionalSaleService, mapper);
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
         var item = sale.AddItem("789", Guid.NewGuid(), "Produto", 4, 10);
-        item.ApplyDiscount(Ambev.DeveloperEvaluation.Domain.Enums.AdditionDiscountTypes.Promocional, 4);
+        item.ApplyDiscount(Ambev.DeveloperEvaluation.Domain.Enums.SaleItemAdjustmentType.Promotional, 4);
         var result = new SubtotalizeSaleResult();
         var command = new SubtotalizeSaleCommand { Id = sale.Id, Version = sale.Version };
 
@@ -89,13 +89,13 @@ public class SubtotalizeSaleHandlerTests
             .Do(_ =>
             {
                 sale.ClearPromotionalAdjustments();
-                item.ApplyDiscount(Ambev.DeveloperEvaluation.Domain.Enums.AdditionDiscountTypes.Promocional, 4);
+                item.ApplyDiscount(Ambev.DeveloperEvaluation.Domain.Enums.SaleItemAdjustmentType.Promotional, 4);
                 sale.RecalculateTotals();
             });
 
         await handler.Handle(command, CancellationToken.None);
 
-        item.Discounts.Should().ContainSingle(x => x.TipoDesconto == Ambev.DeveloperEvaluation.Domain.Enums.AdditionDiscountTypes.Promocional);
+        item.Discounts.Should().ContainSingle(x => x.AdjustmentType == Ambev.DeveloperEvaluation.Domain.Enums.SaleItemAdjustmentType.Promotional);
         item.DiscountAmountTotal.Should().Be(4);
     }
 }

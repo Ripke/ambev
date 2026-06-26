@@ -8,7 +8,7 @@ public class ApplyManualSaleItemAdditionCommandValidator : AbstractValidator<App
     {
         RuleFor(x => x.SaleId).NotEmpty();
         RuleFor(x => x.ItemId).NotEmpty();
-        RuleFor(x => x.AutorizadorId).NotEmpty();
-        RuleFor(x => x.Valor).GreaterThan(0);
+        RuleFor(x => x.AuthorizerId).NotEmpty();
+        RuleFor(x => x.Amount).GreaterThan(0);
     }
 }

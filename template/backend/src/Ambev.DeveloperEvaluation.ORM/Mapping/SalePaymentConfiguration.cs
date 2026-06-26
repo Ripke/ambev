@@ -8,7 +8,7 @@ public class SalePaymentConfiguration : IEntityTypeConfiguration<SalePayment>
 {
     public void Configure(EntityTypeBuilder<SalePayment> builder)
     {
-        builder.ToTable("SalesPayments");
+        builder.ToTable("sale_payments");
 
         builder.HasKey(payment => payment.Id);
         builder.Property(payment => payment.Id)
@@ -16,11 +16,11 @@ public class SalePaymentConfiguration : IEntityTypeConfiguration<SalePayment>
             .ValueGeneratedNever()
             .HasDefaultValueSql("gen_random_uuid()");
 
-        builder.Property(payment => payment.IdSales)
+        builder.Property(payment => payment.SaleId)
             .HasColumnType("uuid")
             .IsRequired();
 
-        builder.Property(payment => payment.TypePayment)
+        builder.Property(payment => payment.PaymentType)
             .HasConversion<int>()
             .IsRequired();
 
@@ -32,12 +32,12 @@ public class SalePaymentConfiguration : IEntityTypeConfiguration<SalePayment>
             .HasColumnType("timestamp with time zone")
             .IsRequired();
 
-        builder.HasIndex(payment => payment.IdSales);
-        builder.HasIndex(payment => new { payment.IdSales, payment.PaidAt });
+        builder.HasIndex(payment => payment.SaleId);
+        builder.HasIndex(payment => new { payment.SaleId, payment.PaidAt });
 
         builder.HasOne(payment => payment.Sale)
             .WithMany(sale => sale.Payments)
-            .HasForeignKey(payment => payment.IdSales)
+            .HasForeignKey(payment => payment.SaleId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

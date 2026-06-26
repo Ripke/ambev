@@ -6,12 +6,12 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.AdditionDiscount;
 public interface IServiceAdditionDiscount
 {
     Task<Sale> Apply(
-        Domain.Enums.AdditionDiscount tipoOperacao,
-        AdditionDiscountTypes tipoAcrescimoDesconto,
+        SaleItemAdjustmentKind operationKind,
+        SaleItemAdjustmentType adjustmentType,
         Guid saleId,
-        Guid salesItemId,
-        decimal valor,
-        Guid? autorizadorId = null,
-        string? motivo = null,
+        Guid saleItemId,
+        decimal amount,
+        Guid? authorizerId = null,
+        string? reason = null,
         CancellationToken cancellationToken = default);
 }

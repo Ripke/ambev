@@ -142,7 +142,7 @@ public class SaleItemHandlersTests
         var handler = new UpdateSaleItemQuantityHandler(saleRepository, productRepository, mapper);
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
         var item = sale.AddItem("789", Guid.NewGuid(), "Produto", 2, 10);
-        sale.CancelItem(item.Id, Guid.NewGuid(), "Manager", "Motivo");
+        sale.CancelItem(item.Id, Guid.NewGuid(), "Manager", "Reason");
         var command = new UpdateSaleItemQuantityCommand { SaleId = sale.Id, ItemId = item.Id, Quantity = 5 };
 
         saleRepository.GetByIdAsync(sale.Id, Arg.Any<CancellationToken>()).Returns(sale);
@@ -207,7 +207,7 @@ public class SaleItemHandlersTests
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
         var productId = Guid.NewGuid();
         var canceledItem = sale.AddItem("789", productId, "Produto", 10, 10);
-        sale.CancelItem(canceledItem.Id, Guid.NewGuid(), "Manager", "Motivo");
+        sale.CancelItem(canceledItem.Id, Guid.NewGuid(), "Manager", "Reason");
         var product = Product.Create("Produto", "UN", "Marca", "Modelo", ProductType.Normal, 10, ["789"]);
         product.Id = productId;
         var price = ProductPrice.Create(productId, PriceType.Cash, 12, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(1));
@@ -242,7 +242,7 @@ public class SaleItemHandlersTests
             SaleId = sale.Id,
             ItemId = item.Id,
             CancellationAuthorizerId = authorizer.Id,
-            CancellationReason = "Motivo"
+            CancellationReason = "Reason"
         };
 
         saleRepository.GetByIdAsync(sale.Id, Arg.Any<CancellationToken>()).Returns(sale);
@@ -266,7 +266,7 @@ public class SaleItemHandlersTests
         var handler = new CancelSaleItemHandler(saleRepository, userRepository, mapper);
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
         var item = sale.AddItem("789", Guid.NewGuid(), "Produto", 2, 10);
-        sale.CancelItem(item.Id, Guid.NewGuid(), "Manager", "Motivo");
+        sale.CancelItem(item.Id, Guid.NewGuid(), "Manager", "Reason");
         var command = new CancelSaleItemCommand { SaleId = sale.Id, ItemId = item.Id, CancellationAuthorizerId = Guid.NewGuid() };
 
         saleRepository.GetByIdAsync(sale.Id, Arg.Any<CancellationToken>()).Returns(sale);

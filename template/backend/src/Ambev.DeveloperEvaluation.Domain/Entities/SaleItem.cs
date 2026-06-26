@@ -5,7 +5,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
 public class SaleItem : BaseEntity
 {
-    public Guid IdSales { get; private set; }
+    public Guid SaleId { get; private set; }
     public int SequentialNumber { get; private set; }
     public string ProductEan { get; private set; } = string.Empty;
     public Guid ProductId { get; private set; }
@@ -43,7 +43,7 @@ public class SaleItem : BaseEntity
     {
         var item = new SaleItem
         {
-            IdSales = saleId,
+            SaleId = saleId,
             SequentialNumber = sequentialNumber,
             ProductEan = productEan.Trim(),
             ProductId = productId,
@@ -89,7 +89,7 @@ public class SaleItem : BaseEntity
     }
 
     public void ApplyDiscount(
-        AdditionDiscountTypes tipoDesconto,
+        SaleItemAdjustmentType tipoDesconto,
         decimal valor,
         Guid? autorizadorId = null,
         string? autorizadorName = null,
@@ -101,7 +101,7 @@ public class SaleItem : BaseEntity
     }
 
     public void ApplyAddition(
-        AdditionDiscountTypes tipo,
+        SaleItemAdjustmentType tipo,
         decimal valor,
         Guid? autorizadorId = null,
         string? autorizadorName = null,
@@ -115,16 +115,16 @@ public class SaleItem : BaseEntity
     public void RemovePromotionalAdjustments()
     {
         EnsureCanChange();
-        Discounts.RemoveAll(discount => discount.TipoDesconto == AdditionDiscountTypes.Promocional);
-        Additions.RemoveAll(addition => addition.Tipo == AdditionDiscountTypes.Promocional);
+        Discounts.RemoveAll(discount => discount.AdjustmentType == SaleItemAdjustmentType.Promotional);
+        Additions.RemoveAll(addition => addition.AdjustmentType == SaleItemAdjustmentType.Promotional);
         RecalculateTotals();
     }
 
     private void RecalculateTotals()
     {
         Subtotal = Quantity * UnitPrice;
-        AdditionalAmountTotal = Additions.Sum(addition => addition.Valor);
-        DiscountAmountTotal = Discounts.Sum(discount => discount.Valor);
+        AdditionalAmountTotal = Additions.Sum(addition => addition.Amount);
+        DiscountAmountTotal = Discounts.Sum(discount => discount.Amount);
         Total = Subtotal + AdditionalAmountTotal - DiscountAmountTotal;
     }
 

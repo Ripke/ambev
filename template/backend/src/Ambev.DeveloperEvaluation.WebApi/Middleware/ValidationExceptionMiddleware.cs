@@ -43,7 +43,8 @@ namespace Ambev.DeveloperEvaluation.WebApi.Middleware
 
             var jsonOptions = new JsonSerializerOptions
             {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+                DictionaryKeyPolicy = JsonNamingPolicy.SnakeCaseLower
             };
 
             return context.Response.WriteAsync(JsonSerializer.Serialize(response, jsonOptions));
@@ -64,7 +65,8 @@ namespace Ambev.DeveloperEvaluation.WebApi.Middleware
 
             var jsonOptions = new JsonSerializerOptions
             {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+                DictionaryKeyPolicy = JsonNamingPolicy.SnakeCaseLower
             };
 
             return context.Response.WriteAsync(JsonSerializer.Serialize(response, jsonOptions));

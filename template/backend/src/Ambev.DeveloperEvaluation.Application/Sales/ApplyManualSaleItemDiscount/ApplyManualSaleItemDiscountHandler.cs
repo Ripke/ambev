@@ -7,12 +7,12 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.ApplyManualSaleItemDiscoun
 
 public class ApplyManualSaleItemDiscountHandler : IRequestHandler<ApplyManualSaleItemDiscountCommand, ApplyManualSaleItemDiscountResult>
 {
-    private readonly IServiceAdditionDiscount _serviceAcrescimoDesconto;
+    private readonly IServiceAdditionDiscount _adjustmentService;
     private readonly IMapper _mapper;
 
-    public ApplyManualSaleItemDiscountHandler(IServiceAdditionDiscount serviceAcrescimoDesconto, IMapper mapper)
+    public ApplyManualSaleItemDiscountHandler(IServiceAdditionDiscount adjustmentService, IMapper mapper)
     {
-        _serviceAcrescimoDesconto = serviceAcrescimoDesconto;
+        _adjustmentService = adjustmentService;
         _mapper = mapper;
     }
 
@@ -24,14 +24,14 @@ public class ApplyManualSaleItemDiscountHandler : IRequestHandler<ApplyManualSal
         if (!validationResult.IsValid)
             throw new ValidationException(validationResult.Errors);
 
-        var sale = await _serviceAcrescimoDesconto.Apply(
-            Domain.Enums.AdditionDiscount.Desconto,
-            Domain.Enums.AdditionDiscountTypes.Manual,
+        var sale = await _adjustmentService.Apply(
+            Domain.Enums.SaleItemAdjustmentKind.Discount,
+            Domain.Enums.SaleItemAdjustmentType.Manual,
             request.SaleId,
             request.ItemId,
-            request.Valor,
-            request.AutorizadorId,
-            request.Motivo,
+            request.Amount,
+            request.AuthorizerId,
+            request.Reason,
             cancellationToken);
 
         return _mapper.Map<ApplyManualSaleItemDiscountResult>(sale);

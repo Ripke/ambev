@@ -8,7 +8,7 @@ public class ProductBarcodeConfiguration : IEntityTypeConfiguration<ProductBarco
 {
     public void Configure(EntityTypeBuilder<ProductBarcode> builder)
     {
-        builder.ToTable("ProductBarcodes");
+        builder.ToTable("product_barcodes");
 
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id)

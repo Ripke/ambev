@@ -8,7 +8,7 @@ public class CompanyConfiguration : IEntityTypeConfiguration<Company>
 {
     public void Configure(EntityTypeBuilder<Company> builder)
     {
-        builder.ToTable("Companies");
+        builder.ToTable("companies");
 
         builder.HasKey(company => company.Id);
         builder.Property(company => company.Id)
@@ -30,41 +30,41 @@ public class CompanyConfiguration : IEntityTypeConfiguration<Company>
         builder.OwnsOne(company => company.Address, address =>
         {
             address.Property(value => value.Street)
-                .HasColumnName("Street")
+                .HasColumnName("street")
                 .IsRequired()
                 .HasMaxLength(200);
 
             address.Property(value => value.Number)
-                .HasColumnName("Number")
+                .HasColumnName("number")
                 .IsRequired()
                 .HasMaxLength(20);
 
             address.Property(value => value.Complement)
-                .HasColumnName("Complement")
+                .HasColumnName("complement")
                 .HasMaxLength(100);
 
             address.Property(value => value.District)
-                .HasColumnName("District")
+                .HasColumnName("district")
                 .IsRequired()
                 .HasMaxLength(100);
 
             address.Property(value => value.City)
-                .HasColumnName("City")
+                .HasColumnName("city")
                 .IsRequired()
                 .HasMaxLength(100);
 
             address.Property(value => value.State)
-                .HasColumnName("State")
+                .HasColumnName("state")
                 .IsRequired()
                 .HasMaxLength(2);
 
             address.Property(value => value.ZipCode)
-                .HasColumnName("ZipCode")
+                .HasColumnName("zip_code")
                 .IsRequired()
                 .HasMaxLength(8);
 
             address.Property(value => value.Country)
-                .HasColumnName("Country")
+                .HasColumnName("country")
                 .IsRequired()
                 .HasMaxLength(100);
         });

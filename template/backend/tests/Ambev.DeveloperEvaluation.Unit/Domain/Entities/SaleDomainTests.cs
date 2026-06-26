@@ -96,7 +96,7 @@ public class SaleDomainTests
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
         var item = sale.AddItem("789", Guid.NewGuid(), "Produto", 3, 5);
 
-        sale.CancelItem(item.Id, Guid.NewGuid(), "Manager", "Motivo");
+        sale.CancelItem(item.Id, Guid.NewGuid(), "Manager", "Reason");
 
         item.IsCanceled.Should().BeTrue();
         item.Subtotal.Should().Be(15);
@@ -110,9 +110,9 @@ public class SaleDomainTests
     {
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
         var item = sale.AddItem("789", Guid.NewGuid(), "Produto", 3, 5);
-        sale.CancelItem(item.Id, Guid.NewGuid(), "Manager", "Motivo");
+        sale.CancelItem(item.Id, Guid.NewGuid(), "Manager", "Reason");
 
-        var act = () => sale.CancelItem(item.Id, Guid.NewGuid(), "Manager", "Motivo");
+        var act = () => sale.CancelItem(item.Id, Guid.NewGuid(), "Manager", "Reason");
 
         act.Should().Throw<InvalidOperationException>();
     }
@@ -123,7 +123,7 @@ public class SaleDomainTests
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
         var item = sale.AddItem("789", Guid.NewGuid(), "Produto", 2, 10);
 
-        item.ApplyDiscount(AdditionDiscountTypes.Manual, 3, Guid.NewGuid(), "Manager", "Ajuste");
+        item.ApplyDiscount(SaleItemAdjustmentType.Manual, 3, Guid.NewGuid(), "Manager", "Ajuste");
         sale.RecalculateTotals();
 
         item.DiscountAmountTotal.Should().Be(3);
@@ -138,7 +138,7 @@ public class SaleDomainTests
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
         var item = sale.AddItem("789", Guid.NewGuid(), "Produto", 2, 10);
 
-        item.ApplyAddition(AdditionDiscountTypes.Manual, 4, Guid.NewGuid(), "Manager", "Ajuste");
+        item.ApplyAddition(SaleItemAdjustmentType.Manual, 4, Guid.NewGuid(), "Manager", "Ajuste");
         sale.RecalculateTotals();
 
         item.AdditionalAmountTotal.Should().Be(4);
@@ -153,9 +153,9 @@ public class SaleDomainTests
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
         var item = sale.AddItem("789", Guid.NewGuid(), "Produto", 2, 10);
 
-        item.ApplyDiscount(AdditionDiscountTypes.Manual, 2, Guid.NewGuid(), "Manager", "Ajuste");
-        item.ApplyDiscount(AdditionDiscountTypes.Promocional, 1, null, null, "Promo");
-        item.ApplyAddition(AdditionDiscountTypes.Manual, 5, Guid.NewGuid(), "Manager", "Ajuste");
+        item.ApplyDiscount(SaleItemAdjustmentType.Manual, 2, Guid.NewGuid(), "Manager", "Ajuste");
+        item.ApplyDiscount(SaleItemAdjustmentType.Promotional, 1, null, null, "Promo");
+        item.ApplyAddition(SaleItemAdjustmentType.Manual, 5, Guid.NewGuid(), "Manager", "Ajuste");
         sale.RecalculateTotals();
 
         item.Discounts.Should().HaveCount(2);
@@ -172,7 +172,7 @@ public class SaleDomainTests
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
         var item = sale.AddItem("789", Guid.NewGuid(), "Produto", 2, 10);
 
-        var act = () => item.ApplyDiscount(AdditionDiscountTypes.Manual, 0, Guid.NewGuid(), "Manager", "Ajuste");
+        var act = () => item.ApplyDiscount(SaleItemAdjustmentType.Manual, 0, Guid.NewGuid(), "Manager", "Ajuste");
 
         act.Should().Throw<ArgumentException>();
     }

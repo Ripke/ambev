@@ -9,7 +9,7 @@ public class RegisterSalePaymentCommandValidator : AbstractValidator<RegisterSal
     {
         RuleFor(x => x.SaleId).NotEmpty();
         RuleFor(x => x.Version).NotEmpty();
-        RuleFor(x => x.TypePayment)
+        RuleFor(x => x.PaymentType)
             .IsInEnum()
             .NotEqual(PaymentType.Unknown);
         RuleFor(x => x.Value).GreaterThan(0);

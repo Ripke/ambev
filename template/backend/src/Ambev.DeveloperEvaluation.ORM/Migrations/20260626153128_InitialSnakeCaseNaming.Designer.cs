@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ambev.DeveloperEvaluation.ORM.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    [Migration("20260626121838_AddSalePayments")]
-    partial class AddSalePayments
+    [Migration("20260626153128_InitialSnakeCaseNaming")]
+    partial class InitialSnakeCaseNaming
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,129 +31,156 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
+                        .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<string>("Cnpj")
                         .IsRequired()
                         .HasMaxLength(14)
-                        .HasColumnType("character varying(14)");
+                        .HasColumnType("character varying(14)")
+                        .HasColumnName("cnpj");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Cnpj")
                         .IsUnique();
 
-                    b.ToTable("Companies", (string)null);
+                    b.ToTable("companies", (string)null);
                 });
 
             modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.Customer", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
+                        .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<DateTime>("BirthDate")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("birth_date");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("EncryptedCpf")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("encrypted_cpf");
 
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("full_name");
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("customers", (string)null);
                 });
 
             modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.Product", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
+                        .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<string>("Brand")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("brand");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("description");
 
                     b.Property<decimal>("MaxSaleQuantity")
-                        .HasColumnType("numeric(18,3)");
+                        .HasColumnType("numeric(18,3)")
+                        .HasColumnName("max_sale_quantity");
 
                     b.Property<string>("Model")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("model");
 
                     b.Property<int>("ProductType")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("product_type");
 
                     b.Property<string>("UnitMeasure")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("unit_measure");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("products", (string)null);
                 });
 
             modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.ProductBarcode", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
+                        .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<string>("Barcode")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("barcode");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("product_id");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
@@ -163,41 +190,49 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                     b.HasIndex("ProductId", "Barcode")
                         .IsUnique();
 
-                    b.ToTable("ProductBarcodes", (string)null);
+                    b.ToTable("product_barcodes", (string)null);
                 });
 
             modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.ProductPrice", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
+                        .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<DateTime>("EffectiveEndAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("effective_end_at");
 
                     b.Property<DateTime>("EffectiveStartAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("effective_start_at");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("numeric(18,2)");
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("price");
 
                     b.Property<int>("PriceType")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("price_type");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("product_id");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductPrices", null, t =>
+                    b.ToTable("product_prices", null, t =>
                         {
                             t.HasCheckConstraint("CK_ProductPrices_EffectiveRange", "\"EffectiveEndAt\" > \"EffectiveStartAt\"");
                         });
@@ -207,78 +242,100 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
+                        .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<decimal>("AdditionalAmountTotal")
-                        .HasColumnType("numeric(18,2)");
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("additional_amount_total");
 
                     b.Property<Guid?>("CancellationAuthorizerId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("cancellation_authorizer_id");
 
                     b.Property<string>("CancellationAuthorizerName")
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("cancellation_authorizer_name");
 
                     b.Property<string>("CancellationReason")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("cancellation_reason");
 
                     b.Property<decimal>("ChangeAmountTotal")
-                        .HasColumnType("numeric(18,2)");
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("change_amount_total");
 
                     b.Property<Guid>("CompanyId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
 
                     b.Property<string>("CompanyName")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("company_name");
 
                     b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("customer_id");
 
                     b.Property<string>("CustomerName")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("customer_name");
 
                     b.Property<decimal>("DiscountAmountTotal")
-                        .HasColumnType("numeric(18,2)");
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("discount_amount_total");
 
                     b.Property<DateTime?>("FinishedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("finished_at");
 
                     b.Property<bool>("IsCanceled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_canceled");
 
                     b.Property<DateTime>("MovementDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("movement_date");
 
                     b.Property<decimal>("PaymentAmountTotal")
-                        .HasColumnType("numeric(18,2)");
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("payment_amount_total");
 
                     b.Property<long>("SaleNumber")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
+                        .HasColumnName("sale_number")
                         .HasDefaultValueSql("nextval('sales_numbers')");
 
                     b.Property<DateTime>("StartedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("started_at");
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
 
                     b.Property<DateTime>("StatusChangedDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("status_changed_date");
 
                     b.Property<decimal>("Subtotal")
-                        .HasColumnType("numeric(18,2)");
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("subtotal");
 
                     b.Property<decimal>("Total")
-                        .HasColumnType("numeric(18,2)");
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("total");
 
                     b.Property<Guid>("Version")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("version");
 
                     b.HasKey("Id");
 
@@ -291,131 +348,158 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
 
                     b.HasIndex("Status");
 
-                    b.ToTable("Sales", (string)null);
+                    b.ToTable("sales", (string)null);
                 });
 
             modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.SaleChange", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
+                        .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<DateTime>("ChangedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("changed_at");
 
-                    b.Property<Guid>("IdSales")
-                        .HasColumnType("uuid");
+                    b.Property<int>("PaymentType")
+                        .HasColumnType("integer")
+                        .HasColumnName("payment_type");
 
-                    b.Property<int>("TypePayment")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("SaleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("sale_id");
 
                     b.Property<decimal>("Value")
-                        .HasColumnType("numeric(18,2)");
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("value");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdSales");
+                    b.HasIndex("SaleId");
 
-                    b.HasIndex("IdSales", "ChangedAt");
+                    b.HasIndex("SaleId", "ChangedAt");
 
-                    b.ToTable("SalesChanges", (string)null);
+                    b.ToTable("sale_changes", (string)null);
                 });
 
             modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.SaleItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
+                        .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<decimal>("AdditionalAmountTotal")
-                        .HasColumnType("numeric(18,2)");
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("additional_amount_total");
 
                     b.Property<Guid?>("CancellationAuthorizerId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("cancellation_authorizer_id");
 
                     b.Property<string>("CancellationAuthorizerName")
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("cancellation_authorizer_name");
 
                     b.Property<string>("CancellationReason")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("cancellation_reason");
 
                     b.Property<decimal>("DiscountAmountTotal")
-                        .HasColumnType("numeric(18,2)");
-
-                    b.Property<Guid>("IdSales")
-                        .HasColumnType("uuid");
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("discount_amount_total");
 
                     b.Property<bool>("IsCanceled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_canceled");
 
                     b.Property<string>("ProductEan")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("product_ean");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("product_id");
 
                     b.Property<string>("ProductName")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("product_name");
 
                     b.Property<decimal>("Quantity")
-                        .HasColumnType("numeric(18,4)");
+                        .HasColumnType("numeric(18,4)")
+                        .HasColumnName("quantity");
 
                     b.Property<DateTime>("SaleDateTime")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("sale_date_time");
+
+                    b.Property<Guid>("SaleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("sale_id");
 
                     b.Property<int>("SequentialNumber")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("sequential_number");
 
                     b.Property<decimal>("Subtotal")
-                        .HasColumnType("numeric(18,2)");
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("subtotal");
 
                     b.Property<decimal>("Total")
-                        .HasColumnType("numeric(18,2)");
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("total");
 
                     b.Property<decimal>("UnitPrice")
-                        .HasColumnType("numeric(18,2)");
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("unit_price");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdSales");
+                    b.HasIndex("SaleId");
 
-                    b.HasIndex("IdSales", "SequentialNumber")
+                    b.HasIndex("SaleId", "SequentialNumber")
                         .IsUnique();
 
-                    b.ToTable("SalesItems", (string)null);
+                    b.ToTable("sale_items", (string)null);
                 });
 
             modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.SalePayment", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
+                        .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<Guid>("IdSales")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("PaidAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("paid_at");
 
-                    b.Property<int>("TypePayment")
-                        .HasColumnType("integer");
+                    b.Property<int>("PaymentType")
+                        .HasColumnType("integer")
+                        .HasColumnName("payment_type");
+
+                    b.Property<Guid>("SaleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("sale_id");
 
                     b.Property<decimal>("Value")
-                        .HasColumnType("numeric(18,2)");
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("value");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdSales");
+                    b.HasIndex("SaleId");
 
-                    b.HasIndex("IdSales", "PaidAt");
+                    b.HasIndex("SaleId", "PaidAt");
 
-                    b.ToTable("SalesPayments", (string)null);
+                    b.ToTable("sale_payments", (string)null);
                 });
 
             modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.SalesItemAddition", b =>
@@ -425,41 +509,41 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<Guid?>("AutorizadorId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("autorizador_id");
+                    b.Property<int>("AdjustmentType")
+                        .HasColumnType("integer")
+                        .HasColumnName("adjustment_type");
 
-                    b.Property<string>("AutorizadorName")
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<Guid?>("AuthorizerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("authorizer_id");
+
+                    b.Property<string>("AuthorizerName")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)")
-                        .HasColumnName("autorizador_name");
+                        .HasColumnName("authorizer_name");
 
-                    b.Property<DateTime>("DataHora")
+                    b.Property<DateTime>("OccurredAt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("datahora");
+                        .HasColumnName("occurred_at");
 
-                    b.Property<Guid>("IdSalesItem")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id_sales_item");
-
-                    b.Property<string>("Motivo")
+                    b.Property<string>("Reason")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
-                        .HasColumnName("motivo");
+                        .HasColumnName("reason");
 
-                    b.Property<int>("Tipo")
-                        .HasColumnType("integer")
-                        .HasColumnName("tipo");
-
-                    b.Property<decimal>("Valor")
-                        .HasColumnType("numeric(18,2)")
-                        .HasColumnName("valor");
+                    b.Property<Guid>("SaleItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("sale_item_id");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdSalesItem");
+                    b.HasIndex("SaleItemId");
 
-                    b.ToTable("SALES_ITEMS_additions", (string)null);
+                    b.ToTable("sales_item_additions", (string)null);
                 });
 
             modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.SalesItemDiscount", b =>
@@ -469,88 +553,188 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<Guid?>("AutorizadorId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("autorizador_id");
+                    b.Property<int>("AdjustmentType")
+                        .HasColumnType("integer")
+                        .HasColumnName("adjustment_type");
 
-                    b.Property<string>("AutorizadorName")
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<Guid?>("AuthorizerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("authorizer_id");
+
+                    b.Property<string>("AuthorizerName")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)")
-                        .HasColumnName("autorizador_name");
+                        .HasColumnName("authorizer_name");
 
-                    b.Property<DateTime>("DataHora")
+                    b.Property<DateTime>("OccurredAt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("datahora");
+                        .HasColumnName("occurred_at");
 
-                    b.Property<Guid>("IdSalesItem")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id_sales_item");
-
-                    b.Property<string>("Motivo")
+                    b.Property<string>("Reason")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
-                        .HasColumnName("motivo");
+                        .HasColumnName("reason");
 
-                    b.Property<int>("TipoDesconto")
-                        .HasColumnType("integer")
-                        .HasColumnName("tipo_desconto");
-
-                    b.Property<decimal>("Valor")
-                        .HasColumnType("numeric(18,2)")
-                        .HasColumnName("valor");
+                    b.Property<Guid>("SaleItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("sale_item_id");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdSalesItem");
+                    b.HasIndex("SaleItemId");
 
-                    b.ToTable("SALES_ITEMS_discount", (string)null);
+                    b.ToTable("sales_item_discounts", (string)null);
+                });
+
+            modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.SalesPromotion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("description");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("end_date");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("integer")
+                        .HasColumnName("priority");
+
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("product_id");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("start_date");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId", "IsActive", "StartDate", "EndDate");
+
+                    b.ToTable("sales_promotions", (string)null);
+                });
+
+            modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.SalesPromotionItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("DiscountType")
+                        .HasColumnType("integer")
+                        .HasColumnName("discount_type");
+
+                    b.Property<decimal>("DiscountValue")
+                        .HasColumnType("numeric(18,4)")
+                        .HasColumnName("discount_value");
+
+                    b.Property<int>("MaximumQuantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("maximum_quantity");
+
+                    b.Property<int>("MinimumQuantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("minimum_quantity");
+
+                    b.Property<Guid>("PromotionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("promotion_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PromotionId");
+
+                    b.ToTable("sales_promotion_items", (string)null);
                 });
 
             modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
+                        .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("email");
 
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("password");
 
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("phone");
 
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("role");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("username");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.Company", b =>
@@ -559,59 +743,60 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                         {
                             b1.Property<Guid>("CompanyId")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid");
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
 
                             b1.Property<string>("City")
                                 .IsRequired()
                                 .HasMaxLength(100)
                                 .HasColumnType("character varying(100)")
-                                .HasColumnName("City");
+                                .HasColumnName("city");
 
                             b1.Property<string>("Complement")
                                 .IsRequired()
                                 .HasMaxLength(100)
                                 .HasColumnType("character varying(100)")
-                                .HasColumnName("Complement");
+                                .HasColumnName("complement");
 
                             b1.Property<string>("Country")
                                 .IsRequired()
                                 .HasMaxLength(100)
                                 .HasColumnType("character varying(100)")
-                                .HasColumnName("Country");
+                                .HasColumnName("country");
 
                             b1.Property<string>("District")
                                 .IsRequired()
                                 .HasMaxLength(100)
                                 .HasColumnType("character varying(100)")
-                                .HasColumnName("District");
+                                .HasColumnName("district");
 
                             b1.Property<string>("Number")
                                 .IsRequired()
                                 .HasMaxLength(20)
                                 .HasColumnType("character varying(20)")
-                                .HasColumnName("Number");
+                                .HasColumnName("number");
 
                             b1.Property<string>("State")
                                 .IsRequired()
                                 .HasMaxLength(2)
                                 .HasColumnType("character varying(2)")
-                                .HasColumnName("State");
+                                .HasColumnName("state");
 
                             b1.Property<string>("Street")
                                 .IsRequired()
                                 .HasMaxLength(200)
                                 .HasColumnType("character varying(200)")
-                                .HasColumnName("Street");
+                                .HasColumnName("street");
 
                             b1.Property<string>("ZipCode")
                                 .IsRequired()
                                 .HasMaxLength(8)
                                 .HasColumnType("character varying(8)")
-                                .HasColumnName("ZipCode");
+                                .HasColumnName("zip_code");
 
                             b1.HasKey("CompanyId");
 
-                            b1.ToTable("Companies");
+                            b1.ToTable("companies");
 
                             b1.WithOwner()
                                 .HasForeignKey("CompanyId");
@@ -647,7 +832,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                 {
                     b.HasOne("Ambev.DeveloperEvaluation.Domain.Entities.Sale", "Sale")
                         .WithMany("Changes")
-                        .HasForeignKey("IdSales")
+                        .HasForeignKey("SaleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -658,7 +843,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                 {
                     b.HasOne("Ambev.DeveloperEvaluation.Domain.Entities.Sale", "Sale")
                         .WithMany("Items")
-                        .HasForeignKey("IdSales")
+                        .HasForeignKey("SaleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -669,7 +854,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                 {
                     b.HasOne("Ambev.DeveloperEvaluation.Domain.Entities.Sale", "Sale")
                         .WithMany("Payments")
-                        .HasForeignKey("IdSales")
+                        .HasForeignKey("SaleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -680,7 +865,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                 {
                     b.HasOne("Ambev.DeveloperEvaluation.Domain.Entities.SaleItem", "SaleItem")
                         .WithMany("Additions")
-                        .HasForeignKey("IdSalesItem")
+                        .HasForeignKey("SaleItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -691,11 +876,22 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                 {
                     b.HasOne("Ambev.DeveloperEvaluation.Domain.Entities.SaleItem", "SaleItem")
                         .WithMany("Discounts")
-                        .HasForeignKey("IdSalesItem")
+                        .HasForeignKey("SaleItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("SaleItem");
+                });
+
+            modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.SalesPromotionItem", b =>
+                {
+                    b.HasOne("Ambev.DeveloperEvaluation.Domain.Entities.SalesPromotion", "Promotion")
+                        .WithMany("Items")
+                        .HasForeignKey("PromotionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Promotion");
                 });
 
             modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.Product", b =>
@@ -719,6 +915,11 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                     b.Navigation("Additions");
 
                     b.Navigation("Discounts");
+                });
+
+            modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.SalesPromotion", b =>
+                {
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,7 +1,7 @@
 namespace Ambev.DeveloperEvaluation.Domain.Enums;
 
-public enum AdditionDiscount
+public enum SaleItemAdjustmentKind
 {
-    Acrescimo = 1,
-    Desconto = 2
+    Addition = 1,
+    Discount = 2
 }

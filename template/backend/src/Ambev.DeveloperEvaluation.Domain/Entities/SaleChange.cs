@@ -6,8 +6,8 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities;
 public class SaleChange : BaseEntity
 {
     
-    public Guid IdSales { get; private set; }
-    public PaymentType TypePayment { get; private set; }
+    public Guid SaleId { get; private set; }
+    public PaymentType PaymentType { get; private set; }
     public decimal Value { get; private set; }
     public DateTime ChangedAt { get; private set; }
     public Sale Sale { get; private set; } = null!;
@@ -29,8 +29,8 @@ public class SaleChange : BaseEntity
 
         return new SaleChange
         {
-            IdSales = idSales,
-            TypePayment = typePayment,
+            SaleId = idSales,
+            PaymentType = typePayment,
             Value = decimal.Round(value, 2, MidpointRounding.AwayFromZero),
             ChangedAt = DateTime.UtcNow
         };

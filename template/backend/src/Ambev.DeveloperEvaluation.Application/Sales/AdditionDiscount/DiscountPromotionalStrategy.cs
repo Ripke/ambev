@@ -5,16 +5,16 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.AdditionDiscount;
 
 public class DiscountPromotionalStrategy : IAdditionDiscountStrategy
 {
-    public Domain.Enums.AdditionDiscount AdditionDiscount => Domain.Enums.AdditionDiscount.Desconto;
-    public AdditionDiscountTypes AdditionDiscountType => AdditionDiscountTypes.Promocional;
+    public SaleItemAdjustmentKind AdjustmentKind => SaleItemAdjustmentKind.Discount;
+    public SaleItemAdjustmentType AdjustmentType => SaleItemAdjustmentType.Promotional;
 
     public void Apply(
         SaleItem item,
         decimal value,
-        Guid? AuthorizerId = null,
-        string? AuthorizerName = null,
+        Guid? authorizerId = null,
+        string? authorizerName = null,
         string? reason = null)
     {
-        item.ApplyDiscount(AdditionDiscountTypes.Promocional, value, AuthorizerId, AuthorizerName, reason);
+        item.ApplyDiscount(SaleItemAdjustmentType.Promotional, value, authorizerId, authorizerName, reason);
     }
 }

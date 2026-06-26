@@ -105,17 +105,17 @@ public class SaleConfiguration : IEntityTypeConfiguration<Sale>
 
         builder.HasMany(sale => sale.Items)
             .WithOne(item => item.Sale)
-            .HasForeignKey(item => item.IdSales)
+            .HasForeignKey(item => item.SaleId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(sale => sale.Payments)
             .WithOne(payment => payment.Sale)
-            .HasForeignKey(payment => payment.IdSales)
+            .HasForeignKey(payment => payment.SaleId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(sale => sale.Changes)
             .WithOne(change => change.Sale)
-            .HasForeignKey(change => change.IdSales)
+            .HasForeignKey(change => change.SaleId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

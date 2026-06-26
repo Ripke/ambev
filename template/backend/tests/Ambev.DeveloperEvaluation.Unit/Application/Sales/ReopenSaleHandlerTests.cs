@@ -45,9 +45,9 @@ public class ReopenSaleHandlerTests
         var handler = new ReopenSaleHandler(repository, promotionalSaleService, mapper);
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
         var item = sale.AddItem("789", Guid.NewGuid(), "Produto", 2, 10);
-        item.ApplyDiscount(AdditionDiscountTypes.Manual, 2, Guid.NewGuid(), "Manager", "Manual");
-        item.ApplyDiscount(AdditionDiscountTypes.Promocional, 3);
-        item.ApplyAddition(AdditionDiscountTypes.Promocional, 1);
+        item.ApplyDiscount(SaleItemAdjustmentType.Manual, 2, Guid.NewGuid(), "Manager", "Manual");
+        item.ApplyDiscount(SaleItemAdjustmentType.Promotional, 3);
+        item.ApplyAddition(SaleItemAdjustmentType.Promotional, 1);
         sale.RecalculateTotals();
         sale.Subtotalize();
         var result = new ReopenSaleResult();
@@ -59,7 +59,7 @@ public class ReopenSaleHandlerTests
 
         await handler.Handle(command, CancellationToken.None);
 
-        item.Discounts.Should().ContainSingle(x => x.TipoDesconto == AdditionDiscountTypes.Manual);
+        item.Discounts.Should().ContainSingle(x => x.AdjustmentType == SaleItemAdjustmentType.Manual);
         item.Additions.Should().BeEmpty();
         item.DiscountAmountTotal.Should().Be(2);
     }

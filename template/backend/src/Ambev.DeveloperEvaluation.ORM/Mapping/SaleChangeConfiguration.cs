@@ -8,7 +8,7 @@ public class SaleChangeConfiguration : IEntityTypeConfiguration<SaleChange>
 {
     public void Configure(EntityTypeBuilder<SaleChange> builder)
     {
-        builder.ToTable("SalesChanges");
+        builder.ToTable("sale_changes");
 
         builder.HasKey(change => change.Id);
         builder.Property(change => change.Id)
@@ -16,11 +16,11 @@ public class SaleChangeConfiguration : IEntityTypeConfiguration<SaleChange>
             .ValueGeneratedNever()
             .HasDefaultValueSql("gen_random_uuid()");
 
-        builder.Property(change => change.IdSales)
+        builder.Property(change => change.SaleId)
             .HasColumnType("uuid")
             .IsRequired();
 
-        builder.Property(change => change.TypePayment)
+        builder.Property(change => change.PaymentType)
             .HasConversion<int>()
             .IsRequired();
 
@@ -32,12 +32,12 @@ public class SaleChangeConfiguration : IEntityTypeConfiguration<SaleChange>
             .HasColumnType("timestamp with time zone")
             .IsRequired();
 
-        builder.HasIndex(change => change.IdSales);
-        builder.HasIndex(change => new { change.IdSales, change.ChangedAt });
+        builder.HasIndex(change => change.SaleId);
+        builder.HasIndex(change => new { change.SaleId, change.ChangedAt });
 
         builder.HasOne(change => change.Sale)
             .WithMany(sale => sale.Changes)
-            .HasForeignKey(change => change.IdSales)
+            .HasForeignKey(change => change.SaleId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

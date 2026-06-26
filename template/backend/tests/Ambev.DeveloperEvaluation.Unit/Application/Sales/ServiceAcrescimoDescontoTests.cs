@@ -25,8 +25,8 @@ public class ServiceAcrescimoDescontoTests
         userRepository.GetByIdAsync(authorizer.Id, Arg.Any<CancellationToken>()).Returns(authorizer);
 
         var response = await service.Apply(
-            global::Ambev.DeveloperEvaluation.Domain.Enums.AdditionDiscount.Desconto,
-            AdditionDiscountTypes.Manual,
+            global::Ambev.DeveloperEvaluation.Domain.Enums.SaleItemAdjustmentKind.Discount,
+            SaleItemAdjustmentType.Manual,
             sale.Id,
             item.Id,
             3,
@@ -36,7 +36,7 @@ public class ServiceAcrescimoDescontoTests
 
         response.Should().BeSameAs(sale);
         item.Discounts.Should().ContainSingle();
-        item.Discounts[0].AutorizadorName.Should().Be("Manager User");
+        item.Discounts[0].AuthorizerName.Should().Be("Manager User");
         item.Total.Should().Be(17);
         sale.Total.Should().Be(17);
         await saleRepository.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
@@ -56,17 +56,17 @@ public class ServiceAcrescimoDescontoTests
         userRepository.GetByIdAsync(authorizer.Id, Arg.Any<CancellationToken>()).Returns(authorizer);
 
         await service.Apply(
-            global::Ambev.DeveloperEvaluation.Domain.Enums.AdditionDiscount.Acrescimo,
-            AdditionDiscountTypes.Manual,
+            global::Ambev.DeveloperEvaluation.Domain.Enums.SaleItemAdjustmentKind.Addition,
+            SaleItemAdjustmentType.Manual,
             sale.Id,
             item.Id,
             4,
             authorizer.Id,
-            "Frete manual",
+            "Freight manual",
             CancellationToken.None);
 
         item.Additions.Should().ContainSingle();
-        item.Additions[0].AutorizadorName.Should().Be("Admin User");
+        item.Additions[0].AuthorizerName.Should().Be("Admin User");
         item.Total.Should().Be(24);
         sale.Total.Should().Be(24);
     }
@@ -83,8 +83,8 @@ public class ServiceAcrescimoDescontoTests
         saleRepository.GetByIdAsync(sale.Id, Arg.Any<CancellationToken>()).Returns(sale);
 
         var act = () => service.Apply(
-            global::Ambev.DeveloperEvaluation.Domain.Enums.AdditionDiscount.Desconto,
-            AdditionDiscountTypes.Manual,
+            global::Ambev.DeveloperEvaluation.Domain.Enums.SaleItemAdjustmentKind.Discount,
+            SaleItemAdjustmentType.Manual,
             sale.Id,
             item.Id,
             3,
@@ -109,8 +109,8 @@ public class ServiceAcrescimoDescontoTests
         userRepository.GetByIdAsync(authorizer.Id, Arg.Any<CancellationToken>()).Returns(authorizer);
 
         var act = () => service.Apply(
-            global::Ambev.DeveloperEvaluation.Domain.Enums.AdditionDiscount.Desconto,
-            AdditionDiscountTypes.Manual,
+            global::Ambev.DeveloperEvaluation.Domain.Enums.SaleItemAdjustmentKind.Discount,
+            SaleItemAdjustmentType.Manual,
             sale.Id,
             item.Id,
             3,
@@ -131,8 +131,8 @@ public class ServiceAcrescimoDescontoTests
         saleRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns((Sale?)null);
 
         var act = () => service.Apply(
-            global::Ambev.DeveloperEvaluation.Domain.Enums.AdditionDiscount.Desconto,
-            AdditionDiscountTypes.Manual,
+            global::Ambev.DeveloperEvaluation.Domain.Enums.SaleItemAdjustmentKind.Discount,
+            SaleItemAdjustmentType.Manual,
             Guid.NewGuid(),
             Guid.NewGuid(),
             3,
@@ -156,8 +156,8 @@ public class ServiceAcrescimoDescontoTests
         saleRepository.GetByIdAsync(sale.Id, Arg.Any<CancellationToken>()).Returns(sale);
 
         var act = () => service.Apply(
-            global::Ambev.DeveloperEvaluation.Domain.Enums.AdditionDiscount.Desconto,
-            AdditionDiscountTypes.Manual,
+            global::Ambev.DeveloperEvaluation.Domain.Enums.SaleItemAdjustmentKind.Discount,
+            SaleItemAdjustmentType.Manual,
             sale.Id,
             item.Id,
             3,
@@ -176,8 +176,8 @@ public class ServiceAcrescimoDescontoTests
         var service = new ServiceAdditionDiscount(saleRepository, userRepository, [new DiscountPromotionalStrategy()]);
 
         var act = () => service.Apply(
-            global::Ambev.DeveloperEvaluation.Domain.Enums.AdditionDiscount.Acrescimo,
-            AdditionDiscountTypes.Manual,
+            global::Ambev.DeveloperEvaluation.Domain.Enums.SaleItemAdjustmentKind.Addition,
+            SaleItemAdjustmentType.Manual,
             Guid.NewGuid(),
             Guid.NewGuid(),
             3,

@@ -8,7 +8,7 @@ public class SaleItemConfiguration : IEntityTypeConfiguration<SaleItem>
 {
     public void Configure(EntityTypeBuilder<SaleItem> builder)
     {
-        builder.ToTable("SalesItems");
+        builder.ToTable("sale_items");
 
         builder.HasKey(item => item.Id);
         builder.Property(item => item.Id)
@@ -16,7 +16,7 @@ public class SaleItemConfiguration : IEntityTypeConfiguration<SaleItem>
             .ValueGeneratedNever()
             .HasDefaultValueSql("gen_random_uuid()");
 
-        builder.Property(item => item.IdSales)
+        builder.Property(item => item.SaleId)
             .HasColumnType("uuid")
             .IsRequired();
 
@@ -75,22 +75,22 @@ public class SaleItemConfiguration : IEntityTypeConfiguration<SaleItem>
             .HasColumnType("timestamp with time zone")
             .IsRequired();
 
-        builder.HasIndex(item => item.IdSales);
-        builder.HasIndex(item => new { item.IdSales, item.SequentialNumber }).IsUnique();
+        builder.HasIndex(item => item.SaleId);
+        builder.HasIndex(item => new { item.SaleId, item.SequentialNumber }).IsUnique();
 
         builder.HasOne(item => item.Sale)
             .WithMany(sale => sale.Items)
-            .HasForeignKey(item => item.IdSales)
+            .HasForeignKey(item => item.SaleId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(item => item.Discounts)
             .WithOne(discount => discount.SaleItem)
-            .HasForeignKey(discount => discount.IdSalesItem)
+            .HasForeignKey(discount => discount.SaleItemId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(item => item.Additions)
             .WithOne(addition => addition.SaleItem)
-            .HasForeignKey(addition => addition.IdSalesItem)
+            .HasForeignKey(addition => addition.SaleItemId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

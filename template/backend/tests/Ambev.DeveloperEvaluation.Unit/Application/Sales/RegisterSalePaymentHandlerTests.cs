@@ -33,7 +33,7 @@ public class RegisterSalePaymentHandlerTests
         {
             SaleId = sale.Id,
             Version = sale.Version,
-            TypePayment = PaymentType.Cash,
+            PaymentType = PaymentType.Cash,
             Value = 10
         };
         var result = new RegisterSalePaymentResult();
@@ -62,7 +62,7 @@ public class RegisterSalePaymentHandlerTests
         {
             SaleId = sale.Id,
             Version = Guid.NewGuid(),
-            TypePayment = PaymentType.Cash,
+            PaymentType = PaymentType.Cash,
             Value = 10
         }, CancellationToken.None);
 
@@ -84,7 +84,7 @@ public class RegisterSalePaymentHandlerTests
         {
             SaleId = sale.Id,
             Version = sale.Version,
-            TypePayment = PaymentType.CreditCard,
+            PaymentType = PaymentType.CreditCard,
             Value = 10
         }, CancellationToken.None);
 

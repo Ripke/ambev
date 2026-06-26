@@ -5,11 +5,11 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales;
 public class SaleItemAdditionResponse
 {
     public Guid Id { get; set; }
-    public Guid IdSalesItem { get; set; }
-    public AdditionDiscountTypes Tipo { get; set; }
-    public decimal Valor { get; set; }
-    public Guid? AutorizadorId { get; set; }
-    public string? AutorizadorName { get; set; }
-    public string? Motivo { get; set; }
-    public DateTime DataHora { get; set; }
+    public Guid SaleItemId { get; set; }
+    public SaleItemAdjustmentType AdjustmentType { get; set; }
+    public decimal Amount { get; set; }
+    public Guid? AuthorizerId { get; set; }
+    public string? AuthorizerName { get; set; }
+    public string? Reason { get; set; }
+    public DateTime OccurredAt { get; set; }
 }

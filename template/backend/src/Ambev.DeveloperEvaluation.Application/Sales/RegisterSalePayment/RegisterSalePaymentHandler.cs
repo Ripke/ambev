@@ -35,7 +35,7 @@ public class RegisterSalePaymentHandler : IRequestHandler<RegisterSalePaymentCom
 
         try
         {
-            sale.RegisterPayment(request.TypePayment, request.Value);
+            sale.RegisterPayment(request.PaymentType, request.Value);
         }
         catch (InvalidOperationException ex)
         {

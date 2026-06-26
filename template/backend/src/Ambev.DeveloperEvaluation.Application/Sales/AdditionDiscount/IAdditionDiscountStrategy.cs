@@ -5,13 +5,13 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.AdditionDiscount;
 
 public interface IAdditionDiscountStrategy
 {
-    Domain.Enums.AdditionDiscount AdditionDiscount { get; }
-    AdditionDiscountTypes AdditionDiscountType { get; }
+    SaleItemAdjustmentKind AdjustmentKind { get; }
+    SaleItemAdjustmentType AdjustmentType { get; }
 
     void Apply(
         SaleItem item,
         decimal value,
-        Guid? AuthorizerId = null,
-        string? AuthorizerName = null,
+        Guid? authorizerId = null,
+        string? authorizerName = null,
         string? reason = null);
 }

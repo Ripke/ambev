@@ -8,7 +8,7 @@ public class SalesPromotionConfiguration : IEntityTypeConfiguration<SalesPromoti
 {
     public void Configure(EntityTypeBuilder<SalesPromotion> builder)
     {
-        builder.ToTable("sales_promotion");
+        builder.ToTable("sales_promotions");
 
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id)

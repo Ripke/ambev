@@ -111,7 +111,7 @@ public class PromotionalSaleServiceTests
         var service = new PromotionalSaleService(repository);
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
         var item = sale.AddItem("789", Guid.NewGuid(), "Produto", 4, 10);
-        item.ApplyDiscount(AdditionDiscountTypes.Manual, 1, Guid.NewGuid(), "Manager", "Manual");
+        item.ApplyDiscount(SaleItemAdjustmentType.Manual, 1, Guid.NewGuid(), "Manager", "Manual");
         var promotion = SalesPromotion.Create("Promo", null, 1, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(1), null, true, [SalesPromotionItem.Create(4, 9, DiscountType.Percentage, 10)]);
         var promotionItem = promotion.Items.Single();
 
@@ -122,7 +122,7 @@ public class PromotionalSaleServiceTests
         await service.ApplyAsync(sale, CancellationToken.None);
 
         item.Discounts.Should().HaveCount(2);
-        item.Discounts.Count(x => x.TipoDesconto == AdditionDiscountTypes.Promocional).Should().Be(1);
+        item.Discounts.Count(x => x.AdjustmentType == SaleItemAdjustmentType.Promotional).Should().Be(1);
         item.DiscountAmountTotal.Should().Be(5);
     }
 
@@ -133,14 +133,14 @@ public class PromotionalSaleServiceTests
         var service = new PromotionalSaleService(repository);
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
         var item = sale.AddItem("789", Guid.NewGuid(), "Produto", 2, 10);
-        item.ApplyDiscount(AdditionDiscountTypes.Manual, 2, Guid.NewGuid(), "Manager", "Manual");
-        item.ApplyDiscount(AdditionDiscountTypes.Promocional, 3);
-        item.ApplyAddition(AdditionDiscountTypes.Promocional, 1);
+        item.ApplyDiscount(SaleItemAdjustmentType.Manual, 2, Guid.NewGuid(), "Manager", "Manual");
+        item.ApplyDiscount(SaleItemAdjustmentType.Promotional, 3);
+        item.ApplyAddition(SaleItemAdjustmentType.Promotional, 1);
         sale.RecalculateTotals();
 
         service.Clear(sale);
 
-        item.Discounts.Should().ContainSingle(x => x.TipoDesconto == AdditionDiscountTypes.Manual);
+        item.Discounts.Should().ContainSingle(x => x.AdjustmentType == SaleItemAdjustmentType.Manual);
         item.Additions.Should().BeEmpty();
         item.DiscountAmountTotal.Should().Be(2);
     }

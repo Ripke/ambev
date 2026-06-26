@@ -32,13 +32,13 @@ public class PromotionalSaleService : IPromotionalSaleService
             var discountAmount = CalculateDiscountAmount(item, promotionItem);
             if (discountAmount > 0)
             {
-                item.ApplyDiscount(AdditionDiscountTypes.Promocional, discountAmount);
+                item.ApplyDiscount(SaleItemAdjustmentType.Promotional, discountAmount);
                 continue;
             }
 
             var additionAmount = CalculateAdditionAmount(item, promotionItem);
             if (additionAmount > 0)
-                item.ApplyAddition(AdditionDiscountTypes.Promocional, additionAmount);
+                item.ApplyAddition(SaleItemAdjustmentType.Promotional, additionAmount);
         }
 
         sale.RecalculateTotals();
