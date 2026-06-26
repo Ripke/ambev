@@ -46,6 +46,7 @@ public class Program
             );
 
             builder.Services.AddJwtAuthentication(builder.Configuration);
+            builder.Services.AddScoped<ISaleAuthorizationService, SaleAuthorizationService>();
 
             builder.RegisterDependencies();
 

@@ -43,7 +43,7 @@ public class CancelSaleHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WithInvalidAuthorizerRole_ThrowsValidationException()
+    public async Task Handle_WithCustomerAuthorizer_CancelsSale()
     {
         var repository = Substitute.For<ISaleRepository>();
         var userRepository = Substitute.For<IUserRepository>();
@@ -51,6 +51,7 @@ public class CancelSaleHandlerTests
         var handler = new CancelSaleHandler(repository, userRepository, mapper);
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
         var authorizer = new User { Id = Guid.NewGuid(), Username = "Customer User", Role = UserRole.Customer };
+        var result = new CancelSaleResult();
         var command = new CancelSaleCommand
         {
             Id = sale.Id,
@@ -60,9 +61,12 @@ public class CancelSaleHandlerTests
 
         repository.GetByIdAsync(sale.Id, Arg.Any<CancellationToken>()).Returns(sale);
         userRepository.GetByIdAsync(authorizer.Id, Arg.Any<CancellationToken>()).Returns(authorizer);
+        mapper.Map<CancelSaleResult>(sale).Returns(result);
 
-        var act = () => handler.Handle(command, CancellationToken.None);
+        var response = await handler.Handle(command, CancellationToken.None);
 
-        await act.Should().ThrowAsync<ValidationException>();
+        sale.Status.Should().Be(SaleStatus.Canceled);
+        sale.CancellationAuthorizerName.Should().Be("Customer User");
+        response.Should().BeSameAs(result);
     }
 }

@@ -1,4 +1,4 @@
-using Ambev.DeveloperEvaluation.Application.Sales.GetCurrentSaleByCustomer;
+using Ambev.DeveloperEvaluation.Application.Sales.GetCurrentSaleByUser;
 using Ambev.DeveloperEvaluation.Application.Sales.GetSale;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
@@ -29,18 +29,18 @@ public class SaleQueryHandlersTests
     }
 
     [Fact]
-    public async Task GetCurrentSaleByCustomer_ShouldReturnCurrentSale()
+    public async Task GetCurrentSaleByUser_ShouldReturnCurrentSale()
     {
         var repository = Substitute.For<ISaleRepository>();
         var mapper = Substitute.For<IMapper>();
-        var handler = new GetCurrentSaleByCustomerHandler(repository, mapper);
+        var handler = new GetCurrentSaleByUserHandler(repository, mapper);
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
-        var result = new GetCurrentSaleByCustomerResult();
+        var result = new GetCurrentSaleByUserResult();
 
-        repository.GetCurrentByCustomerIdAsync(sale.CustomerId, Arg.Any<CancellationToken>()).Returns(sale);
-        mapper.Map<GetCurrentSaleByCustomerResult>(sale).Returns(result);
+        repository.GetCurrentByUserIdAsync(sale.UserId, Arg.Any<CancellationToken>()).Returns(sale);
+        mapper.Map<GetCurrentSaleByUserResult>(sale).Returns(result);
 
-        var response = await handler.Handle(new GetCurrentSaleByCustomerCommand(sale.CustomerId), CancellationToken.None);
+        var response = await handler.Handle(new GetCurrentSaleByUserCommand(sale.UserId), CancellationToken.None);
 
         response.Should().BeSameAs(result);
     }

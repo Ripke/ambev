@@ -33,11 +33,13 @@ namespace Ambev.DeveloperEvaluation.Common.Security
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
                     ValidateAudience = false,
+                    RoleClaimType = System.Security.Claims.ClaimTypes.Role,
+                    NameClaimType = System.Security.Claims.ClaimTypes.Name,
                     ClockSkew = TimeSpan.Zero
                 };
             });
 
-            services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+            services.AddAuthorization();
 
             return services;
         }

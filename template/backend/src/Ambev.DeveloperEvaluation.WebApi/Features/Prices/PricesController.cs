@@ -3,6 +3,7 @@ using Ambev.DeveloperEvaluation.Application.Prices.DeleteProductPrice;
 using Ambev.DeveloperEvaluation.Application.Prices.GetProductPrice;
 using Ambev.DeveloperEvaluation.Application.Prices.ListProductPrices;
 using Ambev.DeveloperEvaluation.Application.Prices.UpdateProductPrice;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Prices.CreateProductPrice;
 using Ambev.DeveloperEvaluation.WebApi.Features.Prices.DeleteProductPrice;
@@ -11,12 +12,14 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Prices.ListProductPrices;
 using Ambev.DeveloperEvaluation.WebApi.Features.Prices.UpdateProductPrice;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Prices;
 
 [ApiController]
 [Route("api")]
+[Authorize(Roles = $"{nameof(UserRole.Manager)},{nameof(UserRole.Admin)}")]
 public class PricesController : BaseController
 {
     private readonly IMediator _mediator;
@@ -124,6 +127,7 @@ public class PricesController : BaseController
     }
 
     [HttpDelete("prices/{id}")]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]

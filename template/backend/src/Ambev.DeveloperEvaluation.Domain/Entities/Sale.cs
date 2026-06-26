@@ -27,8 +27,8 @@ public class Sale : BaseEntity
     public string? CancellationReason { get; private set; }
     public Guid CompanyId { get; private set; }
     public string CompanyName { get; private set; } = string.Empty;
-    public Guid CustomerId { get; private set; }
-    public string CustomerName { get; private set; } = string.Empty;
+    public Guid UserId { get; private set; }
+    public string UserName { get; private set; } = string.Empty;
     public List<SaleItem> Items { get; private set; } = [];
     public List<SalePayment> Payments { get; private set; } = [];
     public List<SaleChange> Changes { get; private set; } = [];
@@ -49,8 +49,8 @@ public class Sale : BaseEntity
     public static Sale Create(
         Guid companyId,
         string companyName,
-        Guid customerId,
-        string customerName)
+        Guid userId,
+        string userName)
     {
         var now = DateTime.UtcNow;
         var sale = new Sale
@@ -62,8 +62,8 @@ public class Sale : BaseEntity
             Version = Guid.NewGuid(),
             CompanyId = companyId,
             CompanyName = companyName.Trim(),
-            CustomerId = customerId,
-            CustomerName = customerName.Trim(),
+            UserId = userId,
+            UserName = userName.Trim(),
             IsCanceled = false,
             Subtotal = 0,
             Total = 0,

@@ -10,18 +10,18 @@ public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, CreateSaleRe
 {
     private readonly ISaleRepository _saleRepository;
     private readonly ICompanyRepository _companyRepository;
-    private readonly ICustomerRepository _customerRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
 
     public CreateSaleHandler(
         ISaleRepository saleRepository,
         ICompanyRepository companyRepository,
-        ICustomerRepository customerRepository,
+        IUserRepository userRepository,
         IMapper mapper)
     {
         _saleRepository = saleRepository;
         _companyRepository = companyRepository;
-        _customerRepository = customerRepository;
+        _userRepository = userRepository;
         _mapper = mapper;
     }
 
@@ -33,11 +33,11 @@ public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, CreateSaleRe
         if (!validationResult.IsValid)
             throw new ValidationException(validationResult.Errors);
 
-        if (await _saleRepository.ExistsOpenSaleByCustomerIdAsync(command.CustomerId, cancellationToken))
+        if (await _saleRepository.ExistsOpenSaleByUserIdAsync(command.UserId, cancellationToken))
         {
             throw new ValidationException(new[]
             {
-                new ValidationFailure(nameof(command.CustomerId), "Customer already has a current sale.")
+                new ValidationFailure(nameof(command.UserId), "User already has a current sale.")
             });
         }
 
@@ -45,15 +45,15 @@ public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, CreateSaleRe
         if (company == null)
             throw new KeyNotFoundException($"Company with ID {command.CompanyId} not found");
 
-        var customer = await _customerRepository.GetByIdAsync(command.CustomerId, cancellationToken);
-        if (customer == null)
-            throw new KeyNotFoundException($"Customer with ID {command.CustomerId} not found");
+        var user = await _userRepository.GetByIdAsync(command.UserId, cancellationToken);
+        if (user == null)
+            throw new KeyNotFoundException($"User with ID {command.UserId} not found");
 
         var sale = Domain.Entities.Sale.Create(
             command.CompanyId,
             company.Name,
-            command.CustomerId,
-            customer.FullName);
+            command.UserId,
+            user.Username);
 
         var createdSale = await _saleRepository.CreateAsync(sale, cancellationToken);
         return _mapper.Map<CreateSaleResult>(createdSale);

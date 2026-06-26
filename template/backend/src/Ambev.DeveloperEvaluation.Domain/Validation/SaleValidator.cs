@@ -10,8 +10,8 @@ public class SaleValidator : AbstractValidator<Sale>
     {
         RuleFor(sale => sale.CompanyId).NotEmpty();
         RuleFor(sale => sale.CompanyName).NotEmpty().MaximumLength(200);
-        RuleFor(sale => sale.CustomerId).NotEmpty();
-        RuleFor(sale => sale.CustomerName).NotEmpty().MaximumLength(200);
+        RuleFor(sale => sale.UserId).NotEmpty();
+        RuleFor(sale => sale.UserName).NotEmpty().MaximumLength(200);
         RuleFor(sale => sale.Version).NotEmpty();
         RuleFor(sale => sale.Status)
             .IsInEnum()

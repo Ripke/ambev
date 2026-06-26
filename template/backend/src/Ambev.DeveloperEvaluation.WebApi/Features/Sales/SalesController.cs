@@ -1,43 +1,47 @@
-using Ambev.DeveloperEvaluation.Application.Sales.CancelSale;
-using Ambev.DeveloperEvaluation.Application.Sales.CancelSaleItem;
-using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
-using Ambev.DeveloperEvaluation.Application.Sales.GetCurrentSaleByCustomer;
-using Ambev.DeveloperEvaluation.Application.Sales.GetSale;
-using Ambev.DeveloperEvaluation.Application.Sales.ReopenSale;
-using Ambev.DeveloperEvaluation.Application.Sales.RegisterSalePayment;
-using Ambev.DeveloperEvaluation.Application.Sales.SubtotalizeSale;
 using Ambev.DeveloperEvaluation.Application.Sales.AddSaleItem;
 using Ambev.DeveloperEvaluation.Application.Sales.ApplyManualSaleItemAddition;
 using Ambev.DeveloperEvaluation.Application.Sales.ApplyManualSaleItemDiscount;
+using Ambev.DeveloperEvaluation.Application.Sales.CancelSale;
+using Ambev.DeveloperEvaluation.Application.Sales.CancelSaleItem;
+using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
+using Ambev.DeveloperEvaluation.Application.Sales.GetCurrentSaleByUser;
+using Ambev.DeveloperEvaluation.Application.Sales.GetSale;
+using Ambev.DeveloperEvaluation.Application.Sales.RegisterSalePayment;
+using Ambev.DeveloperEvaluation.Application.Sales.ReopenSale;
+using Ambev.DeveloperEvaluation.Application.Sales.SubtotalizeSale;
 using Ambev.DeveloperEvaluation.Application.Sales.UpdateSaleItemQuantity;
+using Ambev.DeveloperEvaluation.WebApi.Common;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.AddSaleItem;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.ApplyManualSaleItemAddition;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.ApplyManualSaleItemDiscount;
-using Ambev.DeveloperEvaluation.WebApi.Features.Sales.AddSaleItem;
-using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CancelSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CancelSaleItem;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
-using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetCurrentSaleByCustomer;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetCurrentSaleByUser;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetSale;
-using Ambev.DeveloperEvaluation.WebApi.Features.Sales.ReopenSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.RegisterSalePayment;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.ReopenSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.SubtotalizeSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.UpdateSaleItemQuantity;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class SalesController : BaseController
 {
+    private readonly ISaleAuthorizationService _saleAuthorizationService;
     private readonly IMediator _mediator;
     private readonly IMapper _mapper;
 
-    public SalesController(IMediator mediator, IMapper mapper)
+    public SalesController(ISaleAuthorizationService saleAuthorizationService, IMediator mediator, IMapper mapper)
     {
+        _saleAuthorizationService = saleAuthorizationService;
         _mediator = mediator;
         _mapper = mapper;
     }
@@ -45,8 +49,12 @@ public class SalesController : BaseController
     [HttpPost]
     [ProducesResponseType(typeof(ApiResponseWithData<CreateSaleResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> CreateSale([FromBody] CreateSaleRequest request, CancellationToken cancellationToken)
     {
+        if (!_saleAuthorizationService.CanAccessUser(request.UserId, GetCurrentUserId(), GetCurrentUserRole()))
+            return Forbid();
+
         var validator = new CreateSaleRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
@@ -67,9 +75,13 @@ public class SalesController : BaseController
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(ApiResponseWithData<GetSaleResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetSale([FromRoute] Guid id, CancellationToken cancellationToken)
     {
+        if (!await _saleAuthorizationService.CanAccessSaleAsync(id, GetCurrentUserId(), GetCurrentUserRole(), cancellationToken))
+            return Forbid();
+
         var request = new GetSaleRequest { Id = id };
         var validator = new GetSaleRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
@@ -88,36 +100,44 @@ public class SalesController : BaseController
         });
     }
 
-    [HttpGet("customers/{customerId}")]
-    [ProducesResponseType(typeof(ApiResponseWithData<GetCurrentSaleByCustomerResponse>), StatusCodes.Status200OK)]
+    [HttpGet("users/{userId}")]
+    [ProducesResponseType(typeof(ApiResponseWithData<GetCurrentSaleByUserResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetCurrentSaleByCustomer([FromRoute] Guid customerId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetCurrentSaleByUser([FromRoute] Guid userId, CancellationToken cancellationToken)
     {
-        var request = new GetCurrentSaleByCustomerRequest { CustomerId = customerId };
-        var validator = new GetCurrentSaleByCustomerRequestValidator();
+        if (!_saleAuthorizationService.CanAccessUser(userId, GetCurrentUserId(), GetCurrentUserRole()))
+            return Forbid();
+
+        var request = new GetCurrentSaleByUserRequest { UserId = userId };
+        var validator = new GetCurrentSaleByUserRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
             return BadRequest(validationResult.Errors);
 
-        var command = _mapper.Map<GetCurrentSaleByCustomerCommand>(request.CustomerId);
+        var command = _mapper.Map<GetCurrentSaleByUserCommand>(request.UserId);
         var response = await _mediator.Send(command, cancellationToken);
 
-        return Ok(new ApiResponseWithData<GetCurrentSaleByCustomerResponse>
+        return Ok(new ApiResponseWithData<GetCurrentSaleByUserResponse>
         {
             Success = true,
             Message = "Current sale retrieved successfully",
-            Data = _mapper.Map<GetCurrentSaleByCustomerResponse>(response)
+            Data = _mapper.Map<GetCurrentSaleByUserResponse>(response)
         });
     }
 
     [HttpPost("{saleId}/items")]
     [ProducesResponseType(typeof(ApiResponseWithData<AddSaleItemResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AddSaleItem([FromRoute] Guid saleId, [FromBody] AddSaleItemRequest request, CancellationToken cancellationToken)
     {
+        if (!await _saleAuthorizationService.CanAccessSaleAsync(saleId, GetCurrentUserId(), GetCurrentUserRole(), cancellationToken))
+            return Forbid();
+
         request.SaleId = saleId;
         var validator = new AddSaleItemRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
@@ -139,9 +159,13 @@ public class SalesController : BaseController
     [HttpPost("{saleId}/payments")]
     [ProducesResponseType(typeof(ApiResponseWithData<RegisterSalePaymentResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RegisterSalePayment([FromRoute] Guid saleId, [FromBody] RegisterSalePaymentRequest request, CancellationToken cancellationToken)
     {
+        if (!await _saleAuthorizationService.CanAccessSaleAsync(saleId, GetCurrentUserId(), GetCurrentUserRole(), cancellationToken))
+            return Forbid();
+
         request.SaleId = saleId;
         var validator = new RegisterSalePaymentRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
@@ -163,9 +187,13 @@ public class SalesController : BaseController
     [HttpPut("{saleId}/items/{itemId}/quantity")]
     [ProducesResponseType(typeof(ApiResponseWithData<UpdateSaleItemQuantityResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateSaleItemQuantity([FromRoute] Guid saleId, [FromRoute] Guid itemId, [FromBody] UpdateSaleItemQuantityRequest request, CancellationToken cancellationToken)
     {
+        if (!await _saleAuthorizationService.CanAccessSaleAsync(saleId, GetCurrentUserId(), GetCurrentUserRole(), cancellationToken))
+            return Forbid();
+
         request.SaleId = saleId;
         request.ItemId = itemId;
         var validator = new UpdateSaleItemQuantityRequestValidator();
@@ -188,11 +216,16 @@ public class SalesController : BaseController
     [HttpPost("{saleId}/items/{itemId}/cancel")]
     [ProducesResponseType(typeof(ApiResponseWithData<CancelSaleItemResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> CancelSaleItem([FromRoute] Guid saleId, [FromRoute] Guid itemId, [FromBody] CancelSaleItemRequest request, CancellationToken cancellationToken)
     {
+        if (!await _saleAuthorizationService.CanAccessSaleAsync(saleId, GetCurrentUserId(), GetCurrentUserRole(), cancellationToken))
+            return Forbid();
+
         request.SaleId = saleId;
         request.ItemId = itemId;
+        request.CancellationAuthorizerId = GetCurrentUserId();
         var validator = new CancelSaleItemRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
@@ -211,13 +244,16 @@ public class SalesController : BaseController
     }
 
     [HttpPost("{saleId}/items/{itemId}/discounts/manual")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(ApiResponseWithData<ApplyManualSaleItemDiscountResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> ApplyManualSaleItemDiscount([FromRoute] Guid saleId, [FromRoute] Guid itemId, [FromBody] ApplyManualSaleItemDiscountRequest request, CancellationToken cancellationToken)
     {
         request.SaleId = saleId;
         request.ItemId = itemId;
+        request.AuthorizerId = GetCurrentUserId();
         var validator = new ApplyManualSaleItemDiscountRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
@@ -236,13 +272,16 @@ public class SalesController : BaseController
     }
 
     [HttpPost("{saleId}/items/{itemId}/additions/manual")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(ApiResponseWithData<ApplyManualSaleItemAdditionResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> ApplyManualSaleItemAddition([FromRoute] Guid saleId, [FromRoute] Guid itemId, [FromBody] ApplyManualSaleItemAdditionRequest request, CancellationToken cancellationToken)
     {
         request.SaleId = saleId;
         request.ItemId = itemId;
+        request.AuthorizerId = GetCurrentUserId();
         var validator = new ApplyManualSaleItemAdditionRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
@@ -263,9 +302,13 @@ public class SalesController : BaseController
     [HttpPost("{id}/subtotalize")]
     [ProducesResponseType(typeof(ApiResponseWithData<SubtotalizeSaleResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> SubtotalizeSale([FromRoute] Guid id, [FromBody] SubtotalizeSaleRequest request, CancellationToken cancellationToken)
     {
+        if (!await _saleAuthorizationService.CanAccessSaleAsync(id, GetCurrentUserId(), GetCurrentUserRole(), cancellationToken))
+            return Forbid();
+
         request.Id = id;
         var validator = new SubtotalizeSaleRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
@@ -287,9 +330,13 @@ public class SalesController : BaseController
     [HttpPost("{id}/reopen")]
     [ProducesResponseType(typeof(ApiResponseWithData<ReopenSaleResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> ReopenSale([FromRoute] Guid id, [FromBody] ReopenSaleRequest request, CancellationToken cancellationToken)
     {
+        if (!await _saleAuthorizationService.CanAccessSaleAsync(id, GetCurrentUserId(), GetCurrentUserRole(), cancellationToken))
+            return Forbid();
+
         request.Id = id;
         var validator = new ReopenSaleRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
@@ -311,10 +358,15 @@ public class SalesController : BaseController
     [HttpPost("{id}/cancel")]
     [ProducesResponseType(typeof(ApiResponseWithData<CancelSaleResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> CancelSale([FromRoute] Guid id, [FromBody] CancelSaleRequest request, CancellationToken cancellationToken)
     {
+        if (!await _saleAuthorizationService.CanAccessSaleAsync(id, GetCurrentUserId(), GetCurrentUserRole(), cancellationToken))
+            return Forbid();
+
         request.Id = id;
+        request.CancellationAuthorizerId = GetCurrentUserId();
         var validator = new CancelSaleRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 

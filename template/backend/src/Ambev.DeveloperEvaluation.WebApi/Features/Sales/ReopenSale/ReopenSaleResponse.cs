@@ -24,7 +24,7 @@ public class ReopenSaleResponse
     public string? CancellationReason { get; set; }
     public Guid CompanyId { get; set; }
     public string CompanyName { get; set; } = string.Empty;
-    public Guid CustomerId { get; set; }
-    public string CustomerName { get; set; } = string.Empty;
+    public Guid UserId { get; set; }
+    public string UserName { get; set; } = string.Empty;
     public List<SaleItemResponse> Items { get; set; } = [];
 }

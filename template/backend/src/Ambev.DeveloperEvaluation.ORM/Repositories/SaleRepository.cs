@@ -33,7 +33,7 @@ public class SaleRepository : ISaleRepository
             .FirstOrDefaultAsync(sale => sale.Id == id, cancellationToken);
     }
 
-    public Task<Sale?> GetCurrentByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default)
+    public Task<Sale?> GetCurrentByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         return _context.Sales
             .Include(sale => sale.Items.OrderBy(item => item.SequentialNumber))
@@ -42,7 +42,7 @@ public class SaleRepository : ISaleRepository
                 .ThenInclude(item => item.Additions)
             .Include(sale => sale.Payments.OrderBy(payment => payment.PaidAt))
             .Include(sale => sale.Changes.OrderBy(change => change.ChangedAt))
-            .Where(sale => sale.CustomerId == customerId
+            .Where(sale => sale.UserId == userId
                 && sale.Status != SaleStatus.IntegratedWithErp
                 && sale.Status != SaleStatus.Canceled)
             .OrderByDescending(sale => sale.StartedAt)
@@ -61,10 +61,10 @@ public class SaleRepository : ISaleRepository
             .FirstOrDefaultAsync(sale => sale.SaleNumber == saleNumber, cancellationToken);
     }
 
-    public Task<bool> ExistsOpenSaleByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default)
+    public Task<bool> ExistsOpenSaleByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         return _context.Sales.AnyAsync(sale =>
-            sale.CustomerId == customerId
+            sale.UserId == userId
             && sale.Status != SaleStatus.IntegratedWithErp
             && sale.Status != SaleStatus.Canceled, cancellationToken);
     }

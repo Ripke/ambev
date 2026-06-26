@@ -3,6 +3,7 @@ using Ambev.DeveloperEvaluation.Application.Companies.DeleteCompany;
 using Ambev.DeveloperEvaluation.Application.Companies.GetCompany;
 using Ambev.DeveloperEvaluation.Application.Companies.ListCompanies;
 using Ambev.DeveloperEvaluation.Application.Companies.UpdateCompany;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Companies.CreateCompany;
 using Ambev.DeveloperEvaluation.WebApi.Features.Companies.DeleteCompany;
@@ -11,12 +12,14 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Companies.ListCompanies;
 using Ambev.DeveloperEvaluation.WebApi.Features.Companies.UpdateCompany;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Companies;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Roles = $"{nameof(UserRole.Manager)},{nameof(UserRole.Admin)}")]
 public class CompaniesController : BaseController
 {
     private readonly IMediator _mediator;
@@ -113,6 +116,7 @@ public class CompaniesController : BaseController
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]

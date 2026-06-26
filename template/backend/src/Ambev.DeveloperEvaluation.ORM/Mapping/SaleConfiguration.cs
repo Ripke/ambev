@@ -91,15 +91,15 @@ public class SaleConfiguration : IEntityTypeConfiguration<Sale>
             .HasMaxLength(200)
             .IsRequired();
 
-        builder.Property(sale => sale.CustomerId)
+        builder.Property(sale => sale.UserId)
             .HasColumnType("uuid")
             .IsRequired();
 
-        builder.Property(sale => sale.CustomerName)
+        builder.Property(sale => sale.UserName)
             .HasMaxLength(200)
             .IsRequired();
 
-        builder.HasIndex(sale => sale.CustomerId);
+        builder.HasIndex(sale => sale.UserId);
         builder.HasIndex(sale => sale.CompanyId);
         builder.HasIndex(sale => sale.Status);
 

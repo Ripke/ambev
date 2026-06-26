@@ -38,11 +38,13 @@ public class CancelSaleHandler : IRequestHandler<CancelSaleCommand, CancelSaleRe
         if (authorizer == null)
             throw new KeyNotFoundException($"User with ID {request.CancellationAuthorizerId} not found");
 
-        if (authorizer.Role != UserRole.Manager && authorizer.Role != UserRole.Admin)
+        if (authorizer.Role != UserRole.Customer
+            && authorizer.Role != UserRole.Manager
+            && authorizer.Role != UserRole.Admin)
         {
             throw new ValidationException(new[]
             {
-                new ValidationFailure(nameof(request.CancellationAuthorizerId), "Cancellation authorizer must have Manager or Admin role.")
+                new ValidationFailure(nameof(request.CancellationAuthorizerId), "Cancellation authorizer must have Customer, Manager or Admin role.")
             });
         }
 

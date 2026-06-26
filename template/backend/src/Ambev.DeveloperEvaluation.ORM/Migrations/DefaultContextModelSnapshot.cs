@@ -63,45 +63,6 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                     b.ToTable("companies", (string)null);
                 });
 
-            modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.Customer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("date")
-                        .HasColumnName("birth_date");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("EncryptedCpf")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("encrypted_cpf");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("full_name");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer")
-                        .HasColumnName("status");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("customers", (string)null);
-                });
-
             modelBuilder.Entity("Ambev.DeveloperEvaluation.Domain.Entities.Product", b =>
                 {
                     b.Property<Guid>("Id")
@@ -274,16 +235,6 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                         .HasColumnType("character varying(200)")
                         .HasColumnName("company_name");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("customer_id");
-
-                    b.Property<string>("CustomerName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("customer_name");
-
                     b.Property<decimal>("DiscountAmountTotal")
                         .HasColumnType("numeric(18,2)")
                         .HasColumnName("discount_amount_total");
@@ -330,6 +281,16 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                         .HasColumnType("numeric(18,2)")
                         .HasColumnName("total");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("user_name");
+
                     b.Property<Guid>("Version")
                         .HasColumnType("uuid")
                         .HasColumnName("version");
@@ -338,12 +299,12 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.HasIndex("CustomerId");
-
                     b.HasIndex("SaleNumber")
                         .IsUnique();
 
                     b.HasIndex("Status");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("sales", (string)null);
                 });

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Ambev.DeveloperEvaluation.Domain.Enums;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Common;
@@ -7,14 +8,20 @@ namespace Ambev.DeveloperEvaluation.WebApi.Common;
 [ApiController]
 public class BaseController : ControllerBase
 {
-    protected int GetCurrentUserId() =>
-            int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new NullReferenceException());
+    protected Guid GetCurrentUserId() =>
+        Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new NullReferenceException());
+
+    protected string GetCurrentUsername() =>
+        User.FindFirstValue(ClaimTypes.Name) ?? throw new NullReferenceException();
+
+    protected UserRole GetCurrentUserRole() =>
+        Enum.Parse<UserRole>(User.FindFirstValue(ClaimTypes.Role) ?? throw new NullReferenceException());
 
     protected string GetCurrentUserEmail() =>
-        User.FindFirst(ClaimTypes.Email)?.Value ?? throw new NullReferenceException();
+        User.FindFirstValue(ClaimTypes.Email) ?? throw new NullReferenceException();
 
     protected IActionResult Ok<T>(T data) =>
-            base.Ok(new ApiResponseWithData<T> { Data = data, Success = true });
+        base.Ok(new ApiResponseWithData<T> { Data = data, Success = true });
 
     protected IActionResult Created<T>(string routeName, object routeValues, T data) =>
         base.CreatedAtRoute(routeName, routeValues, new ApiResponseWithData<T> { Data = data, Success = true });
@@ -26,12 +33,12 @@ public class BaseController : ControllerBase
         base.NotFound(new ApiResponse { Message = message, Success = false });
 
     protected IActionResult OkPaginated<T>(PaginatedList<T> pagedList) =>
-            Ok(new PaginatedResponse<T>
-            {
-                Data = pagedList,
-                CurrentPage = pagedList.CurrentPage,
-                TotalPages = pagedList.TotalPages,
-                TotalCount = pagedList.TotalCount,
-                Success = true
-            });
+        Ok(new PaginatedResponse<T>
+        {
+            Data = pagedList,
+            CurrentPage = pagedList.CurrentPage,
+            TotalPages = pagedList.TotalPages,
+            TotalCount = pagedList.TotalCount,
+            Success = true
+        });
 }

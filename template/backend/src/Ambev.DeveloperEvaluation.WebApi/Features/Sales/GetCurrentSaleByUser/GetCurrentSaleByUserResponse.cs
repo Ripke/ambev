@@ -1,8 +1,8 @@
 using Ambev.DeveloperEvaluation.Domain.Enums;
 
-namespace Ambev.DeveloperEvaluation.Application.Sales.CancelSale;
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetCurrentSaleByUser;
 
-public class CancelSaleResult
+public class GetCurrentSaleByUserResponse
 {
     public Guid Id { get; set; }
     public long SaleNumber { get; set; }
@@ -26,5 +26,7 @@ public class CancelSaleResult
     public string CompanyName { get; set; } = string.Empty;
     public Guid UserId { get; set; }
     public string UserName { get; set; } = string.Empty;
-    public List<SaleItemResult> Items { get; set; } = [];
+    public List<SaleItemResponse> Items { get; set; } = [];
+    public List<SalePaymentResponse> Payments { get; set; } = [];
+    public List<SaleChangeResponse> Changes { get; set; } = [];
 }

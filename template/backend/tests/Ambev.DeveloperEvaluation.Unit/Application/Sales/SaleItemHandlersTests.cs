@@ -277,7 +277,7 @@ public class SaleItemHandlersTests
     }
 
     [Fact]
-    public async Task CancelSaleItem_WhenAuthorizerIsInvalid_ThrowsValidationException()
+    public async Task CancelSaleItem_WithCustomerAuthorizer_CancelsItem()
     {
         var saleRepository = Substitute.For<ISaleRepository>();
         var userRepository = Substitute.For<IUserRepository>();
@@ -286,14 +286,17 @@ public class SaleItemHandlersTests
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
         var item = sale.AddItem("789", Guid.NewGuid(), "Produto", 2, 10);
         var authorizer = new User { Id = Guid.NewGuid(), Username = "Customer", Role = UserRole.Customer };
+        var result = new CancelSaleItemResult();
         var command = new CancelSaleItemCommand { SaleId = sale.Id, ItemId = item.Id, CancellationAuthorizerId = authorizer.Id };
 
         saleRepository.GetByIdAsync(sale.Id, Arg.Any<CancellationToken>()).Returns(sale);
         userRepository.GetByIdAsync(authorizer.Id, Arg.Any<CancellationToken>()).Returns(authorizer);
+        mapper.Map<CancelSaleItemResult>(sale).Returns(result);
 
-        var act = () => handler.Handle(command, CancellationToken.None);
+        var response = await handler.Handle(command, CancellationToken.None);
 
-        await act.Should().ThrowAsync<ValidationException>();
+        item.IsCanceled.Should().BeTrue();
+        response.Should().BeSameAs(result);
     }
 
     [Fact]

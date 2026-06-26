@@ -3,6 +3,7 @@ using Ambev.DeveloperEvaluation.Application.SalesPromotions.DeleteSalesPromotion
 using Ambev.DeveloperEvaluation.Application.SalesPromotions.GetSalesPromotion;
 using Ambev.DeveloperEvaluation.Application.SalesPromotions.ListSalesPromotions;
 using Ambev.DeveloperEvaluation.Application.SalesPromotions.UpdateSalesPromotion;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.SalesPromotions.CreateSalesPromotion;
 using Ambev.DeveloperEvaluation.WebApi.Features.SalesPromotions.DeleteSalesPromotion;
@@ -11,12 +12,14 @@ using Ambev.DeveloperEvaluation.WebApi.Features.SalesPromotions.ListSalesPromoti
 using Ambev.DeveloperEvaluation.WebApi.Features.SalesPromotions.UpdateSalesPromotion;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.SalesPromotions;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Roles = $"{nameof(UserRole.Manager)},{nameof(UserRole.Admin)}")]
 public class SalesPromotionsController : BaseController
 {
     private readonly IMediator _mediator;
@@ -113,6 +116,7 @@ public class SalesPromotionsController : BaseController
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = nameof(UserRole.Admin))]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]

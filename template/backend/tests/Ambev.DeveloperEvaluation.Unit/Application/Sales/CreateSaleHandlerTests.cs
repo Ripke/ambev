@@ -15,7 +15,7 @@ public class CreateSaleHandlerTests
 {
     private readonly ISaleRepository _saleRepository;
     private readonly ICompanyRepository _companyRepository;
-    private readonly ICustomerRepository _customerRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
     private readonly CreateSaleHandler _handler;
 
@@ -23,9 +23,9 @@ public class CreateSaleHandlerTests
     {
         _saleRepository = Substitute.For<ISaleRepository>();
         _companyRepository = Substitute.For<ICompanyRepository>();
-        _customerRepository = Substitute.For<ICustomerRepository>();
+        _userRepository = Substitute.For<IUserRepository>();
         _mapper = Substitute.For<IMapper>();
-        _handler = new CreateSaleHandler(_saleRepository, _companyRepository, _customerRepository, _mapper);
+        _handler = new CreateSaleHandler(_saleRepository, _companyRepository, _userRepository, _mapper);
     }
 
     [Fact]
@@ -34,15 +34,21 @@ public class CreateSaleHandlerTests
         var command = new CreateSaleCommand
         {
             CompanyId = Guid.NewGuid(),
-            CustomerId = Guid.NewGuid()
+            UserId = Guid.NewGuid()
         };
         var result = new CreateSaleResult();
         var company = Company.Create("Ambev", "11222333000181", CreateAddress(), CompanyStatus.Active);
-        var customer = Customer.Create("Maria Silva", new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc), "529.982.247-25", "encrypted", CustomerStatus.Active);
+        var user = new User
+        {
+            Id = command.UserId,
+            Username = "Maria Silva",
+            Role = UserRole.Customer,
+            Status = UserStatus.Active
+        };
 
-        _saleRepository.ExistsOpenSaleByCustomerIdAsync(command.CustomerId, Arg.Any<CancellationToken>()).Returns(false);
+        _saleRepository.ExistsOpenSaleByUserIdAsync(command.UserId, Arg.Any<CancellationToken>()).Returns(false);
         _companyRepository.GetByIdAsync(command.CompanyId, Arg.Any<CancellationToken>()).Returns(company);
-        _customerRepository.GetByIdAsync(command.CustomerId, Arg.Any<CancellationToken>()).Returns(customer);
+        _userRepository.GetByIdAsync(command.UserId, Arg.Any<CancellationToken>()).Returns(user);
         _saleRepository.CreateAsync(Arg.Any<Sale>(), Arg.Any<CancellationToken>()).Returns(call => call.Arg<Sale>());
         _mapper.Map<CreateSaleResult>(Arg.Any<Sale>()).Returns(result);
 
@@ -50,20 +56,20 @@ public class CreateSaleHandlerTests
 
         response.Should().BeSameAs(result);
         await _saleRepository.Received(1).CreateAsync(
-            Arg.Is<Sale>(sale => sale.CompanyName == "Ambev" && sale.CustomerName == "Maria Silva"),
+            Arg.Is<Sale>(sale => sale.CompanyName == "Ambev" && sale.UserName == "Maria Silva"),
             Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task Handle_WhenCustomerHasCurrentSale_ThrowsValidationException()
+    public async Task Handle_WhenUserHasCurrentSale_ThrowsValidationException()
     {
         var command = new CreateSaleCommand
         {
             CompanyId = Guid.NewGuid(),
-            CustomerId = Guid.NewGuid()
+            UserId = Guid.NewGuid()
         };
 
-        _saleRepository.ExistsOpenSaleByCustomerIdAsync(command.CustomerId, Arg.Any<CancellationToken>()).Returns(true);
+        _saleRepository.ExistsOpenSaleByUserIdAsync(command.UserId, Arg.Any<CancellationToken>()).Returns(true);
 
         var act = () => _handler.Handle(command, CancellationToken.None);
 
