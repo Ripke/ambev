@@ -112,6 +112,14 @@ public class SaleItem : BaseEntity
         RecalculateTotals();
     }
 
+    public void RemovePromotionalAdjustments()
+    {
+        EnsureCanChange();
+        Discounts.RemoveAll(discount => discount.TipoDesconto == AdditionDiscountTypes.Promocional);
+        Additions.RemoveAll(addition => addition.Tipo == AdditionDiscountTypes.Promocional);
+        RecalculateTotals();
+    }
+
     private void RecalculateTotals()
     {
         Subtotal = Quantity * UnitPrice;

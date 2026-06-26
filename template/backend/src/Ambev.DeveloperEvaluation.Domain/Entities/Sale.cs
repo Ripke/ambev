@@ -239,6 +239,16 @@ public class Sale : BaseEntity
         RecalculateTotals();
     }
 
+    public void ClearPromotionalAdjustments()
+    {
+        foreach (var item in Items.Where(item => !item.IsCanceled))
+        {
+            item.RemovePromotionalAdjustments();
+        }
+
+        RecalculateTotals();
+    }
+
     public ValidationResultDetail Validate()
     {
         var validator = new SaleValidator();

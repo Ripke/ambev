@@ -18,6 +18,8 @@ public class DefaultContext : DbContext
     public DbSet<SaleChange> SalesChanges { get; set; }
     public DbSet<SalesItemDiscount> SalesItemDiscounts { get; set; }
     public DbSet<SalesItemAddition> SalesItemAdditions { get; set; }
+    public DbSet<SalesPromotion> SalesPromotions { get; set; }
+    public DbSet<SalesPromotionItem> SalesPromotionItems { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductBarcode> ProductBarcodes { get; set; }
     public DbSet<ProductPrice> ProductPrices { get; set; }

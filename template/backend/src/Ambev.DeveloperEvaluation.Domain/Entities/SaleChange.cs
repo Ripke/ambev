@@ -1,10 +1,11 @@
+using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
-public class SaleChange
+public class SaleChange : BaseEntity
 {
-    public Guid Id { get; private set; }
+    
     public Guid IdSales { get; private set; }
     public PaymentType TypePayment { get; private set; }
     public decimal Value { get; private set; }

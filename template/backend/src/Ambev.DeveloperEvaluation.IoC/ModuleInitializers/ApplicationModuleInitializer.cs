@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.Application.Sales.AdditionDiscount;
+using Ambev.DeveloperEvaluation.Application.Sales.Promotions;
 using Ambev.DeveloperEvaluation.Common.Security;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,7 @@ public class ApplicationModuleInitializer : IModuleInitializer
         builder.Services.AddSingleton<IPasswordHasher, BCryptPasswordHasher>();
         builder.Services.AddSingleton<ICpfProtectionService, AesCpfProtectionService>();
         builder.Services.AddScoped<IServiceAdditionDiscount, ServiceAdditionDiscount>();
+        builder.Services.AddScoped<IPromotionalSaleService, PromotionalSaleService>();
         builder.Services.AddScoped<IAdditionDiscountStrategy, AdditionManualStrategy>();
         builder.Services.AddScoped<IAdditionDiscountStrategy, DiscountManualStrategy>();
         builder.Services.AddScoped<IAdditionDiscountStrategy, DiscountPromotionalStrategy>();

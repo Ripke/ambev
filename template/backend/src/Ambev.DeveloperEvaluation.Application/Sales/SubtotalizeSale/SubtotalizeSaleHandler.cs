@@ -1,5 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.Application.Sales.Promotions;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
@@ -10,11 +11,13 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.SubtotalizeSale;
 public class SubtotalizeSaleHandler : IRequestHandler<SubtotalizeSaleCommand, SubtotalizeSaleResult>
 {
     private readonly ISaleRepository _saleRepository;
+    private readonly IPromotionalSaleService _promotionalSaleService;
     private readonly IMapper _mapper;
 
-    public SubtotalizeSaleHandler(ISaleRepository saleRepository, IMapper mapper)
+    public SubtotalizeSaleHandler(ISaleRepository saleRepository, IPromotionalSaleService promotionalSaleService, IMapper mapper)
     {
         _saleRepository = saleRepository;
+        _promotionalSaleService = promotionalSaleService;
         _mapper = mapper;
     }
 
@@ -42,6 +45,7 @@ public class SubtotalizeSaleHandler : IRequestHandler<SubtotalizeSaleCommand, Su
 
         try
         {
+            await _promotionalSaleService.ApplyAsync(sale, cancellationToken);
             sale.Subtotalize();
         }
         catch (InvalidOperationException ex)
