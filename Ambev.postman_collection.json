@@ -1,0 +1,885 @@
+{
+	"info": {
+		"_postman_id": "1745aec7-4932-463f-afab-e2e64a06642c",
+		"name": "Ambev",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Novo Usuario",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();\r",
+									"pm.globals.set(\"usuario-exemplo-id\", response.data.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"eduardo\",\n  \"password\": \"E16vg800kpm!\",\n  \"phone\": \"4933333333\",\n  \"email\": \"eduardo@gmail.com\",\n  \"status\": 1,\n  \"role\": 3\n}"
+						},
+						"url": {
+							"raw": "https://localhost:7181/api/Users",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7181",
+							"path": [
+								"api",
+								"Users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Companies",
+			"item": [
+				{
+					"name": "Nova Loja",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();\r",
+									"pm.globals.set(\"loja-exemplo-id\", response.data.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token-auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Loja A\",\n  \"cnpj\": \"71834884000128\",\n  \"address\": {\n    \"street\": \"Rua A\",\n    \"number\": \"1234\",\n    \"complement\": \"LOJA B\",\n    \"district\": \"NASSER\",\n    \"city\": \"CAMPO GRANDE\",\n    \"state\": \"MS\",\n    \"zip_code\": \"79116270\",\n    \"country\": \"BRASIL\"\n  },\n  \"status\": 1\n}"
+						},
+						"url": {
+							"raw": "https://localhost:7181/api/Companies",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7181",
+							"path": [
+								"api",
+								"Companies"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Novo Produto",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();\r",
+									"pm.globals.set(\"produto-exemplo-id\", response.data.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token-auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Refrigerante Pepsi Lata 350ML\",\n  \"unit_measure\": \"UN\",\n  \"brand\": \"Pepsi\",\n  \"model\": \"350ML\",\n  \"product_type\": 1,\n  \"max_sale_quantity\": 20,\n  \"barcodes\": [\n    \"789123456788\"\n  ]\n}"
+						},
+						"url": {
+							"raw": "https://localhost:7181/api/Products",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7181",
+							"path": [
+								"api",
+								"Products"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products Prices",
+			"item": [
+				{
+					"name": "Adicionar novo Preco",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token-auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"product_id\": \"{{produto-exemplo-id}}\",\n  \"price_type\": 1,\n  \"price\": 15.99,\n  \"effective_start_at\": \"2026-01-01T16:54:14.860Z\",\n  \"effective_end_at\": \"2026-12-31T16:54:14.860Z\"\n}"
+						},
+						"url": {
+							"raw": "https://localhost:7181/api/products/{{produto-exemplo-id}}/prices",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7181",
+							"path": [
+								"api",
+								"products",
+								"{{produto-exemplo-id}}",
+								"prices"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Promotions",
+			"item": [
+				{
+					"name": "Promoção 10% de desconto 4-9itens",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token-auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Promoção 10% de desconto\",\r\n  \"description\": \"Promoção 10% de desconto em todos os itens da loja\",\r\n  \"priority\": 0,\r\n  \"start_date\": \"2026-01-01T17:36:46.041Z\",\r\n  \"end_date\": \"2026-12-31T00:00:00.000Z\",\r\n  \"product_id\": null, //null = todos produtos participantes\r\n  \"is_active\": true,\r\n  \"items\": [\r\n    {\r\n      \"minimum_quantity\": 4,\r\n      \"maximum_quantity\": 9,\r\n      \"discount_type\": 1,//percentual\r\n      \"discount_value\": 10.00\r\n    }\r\n  ]\r\n}"
+						},
+						"url": {
+							"raw": "https://localhost:7181/api/SalesPromotions",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7181",
+							"path": [
+								"api",
+								"SalesPromotions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Promoção 20% de desconto 10-20 itens",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token-auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Promoção 20% de desconto\",\r\n  \"description\": \"Promoção 20% de desconto em todos os itens da loja\",\r\n  \"priority\": 0,\r\n  \"start_date\": \"2026-01-01T17:36:46.041Z\",\r\n  \"end_date\": \"2026-12-31T00:00:00.000Z\",\r\n  \"product_id\": null, //null = todos produtos participantes\r\n  \"is_active\": true,\r\n  \"items\": [\r\n    {\r\n      \"minimum_quantity\": 10,\r\n      \"maximum_quantity\": 20,\r\n      \"discount_type\": 1,//percentual\r\n      \"discount_value\": 20.00\r\n    }\r\n  ]\r\n}"
+						},
+						"url": {
+							"raw": "https://localhost:7181/api/SalesPromotions",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7181",
+							"path": [
+								"api",
+								"SalesPromotions"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Sales",
+			"item": [
+				{
+					"name": "Nova Venda",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();\r",
+									"pm.globals.set(\"venda-exemplo-id\", response.data.id);\r",
+									"pm.globals.set(\"venda-version-exemplo-id\", response.data.version);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token-auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"company_id\": \"{{loja-exemplo-id}}\",\n  \"user_id\": \"{{usuario-exemplo-id}}\"\n}"
+						},
+						"url": {
+							"raw": "https://localhost:7181/api/Sales",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7181",
+							"path": [
+								"api",
+								"Sales"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Vender Item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();\r",
+									"pm.globals.set(\"primeiro-item-vendido-id\", response.data.data.items[0].id);\r",
+									"pm.globals.set(\"venda-version-exemplo-id\", response.data.data.version);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token-auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sale_id\": \"{{venda-exemplo-id}}\",\n  \"product_id\": \"{{produto-exemplo-id}}\",\n  \"ean\": null,\n  \"quantity\": 10\n}"
+						},
+						"url": {
+							"raw": "https://localhost:7181/api/Sales/{{venda-exemplo-id}}/items",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7181",
+							"path": [
+								"api",
+								"Sales",
+								"{{venda-exemplo-id}}",
+								"items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancelamento de item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();\r",
+									"pm.globals.set(\"venda-version-exemplo-id\", response.data.data.version);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token-auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sale_id\": \"{{venda-exemplo-id}}\",\n  \"item_id\": \"{{primeiro-item-vendido-id}}\",\n  \"cancellation_authorizer_id\": \"{{usuario-exemplo-id}}\",\n  \"cancellation_reason\": \"Motivo do cancelamento\"\n}"
+						},
+						"url": {
+							"raw": "https://localhost:7181/api/Sales/{{venda-exemplo-id}}/items/{{primeiro-item-vendido-id}}/cancel",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7181",
+							"path": [
+								"api",
+								"Sales",
+								"{{venda-exemplo-id}}",
+								"items",
+								"{{primeiro-item-vendido-id}}",
+								"cancel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Consultar Venda por id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();\r",
+									"pm.globals.set(\"venda-version-exemplo-id\", response.data.data.version);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token-auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:7181/api/Sales/{{venda-exemplo-id}}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7181",
+							"path": [
+								"api",
+								"Sales",
+								"{{venda-exemplo-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Subtotalizar venda",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();\r",
+									"pm.globals.set(\"venda-version-exemplo-id\", response.data.data.version);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token-auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"{{venda-exemplo-id}}\",\n  \"version\": \"{{venda-version-exemplo-id}}\"\n}"
+						},
+						"url": {
+							"raw": "https://localhost:7181/api/Sales/{{venda-exemplo-id}}/subtotalize",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7181",
+							"path": [
+								"api",
+								"Sales",
+								"{{venda-exemplo-id}}",
+								"subtotalize"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reabrir Venda",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();\r",
+									"pm.globals.set(\"venda-version-exemplo-id\", response.data.data.version);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token-auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"{{venda-exemplo-id}}\",\n  \"version\": \"{{venda-version-exemplo-id}}\"\n}"
+						},
+						"url": {
+							"raw": "https://localhost:7181/api/Sales/{{venda-exemplo-id}}/reopen",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7181",
+							"path": [
+								"api",
+								"Sales",
+								"{{venda-exemplo-id}}",
+								"reopen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancelar Venda",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();\r",
+									"pm.globals.set(\"venda-version-exemplo-id\", response.data.data.version);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token-auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"{{venda-exemplo-id}}\",\n  \"version\": \"{{venda-version-exemplo-id}}\",\n  \"cancellation_authorizer_id\": \"{{usuario-exemplo-id}}\",\n  \"cancellation_reason\": \"motivo de cancelamento de venda\"\n}"
+						},
+						"url": {
+							"raw": "https://localhost:7181/api/Sales/{{venda-exemplo-id}}/cancel",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7181",
+							"path": [
+								"api",
+								"Sales",
+								"{{venda-exemplo-id}}",
+								"cancel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Efetuar Pagamento em dinheiro",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();\r",
+									"pm.globals.set(\"venda-version-exemplo-id\", response.data.data.version);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token-auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sale_id\": \"{{venda-exemplo-id}}\",\n  \"version\": \"{{venda-version-exemplo-id}}\",\n  \"payment_type\": 1, //1-dinheiro | 2-credito | 3-debito | 4-pix\n  \"value\": 10.00\n}"
+						},
+						"url": {
+							"raw": "https://localhost:7181/api/Sales/{{venda-exemplo-id}}/payments",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7181",
+							"path": [
+								"api",
+								"Sales",
+								"{{venda-exemplo-id}}",
+								"payments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Efetuar Pagamento em Crédito",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();\r",
+									"pm.globals.set(\"venda-version-exemplo-id\", response.data.data.version);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token-auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sale_id\": \"{{venda-exemplo-id}}\",\n  \"version\": \"{{venda-version-exemplo-id}}\",\n  \"payment_type\": 2, //1-dinheiro | 2-credito | 3-debito | 4-pix\n  \"value\": 10.00\n}"
+						},
+						"url": {
+							"raw": "https://localhost:7181/api/Sales/{{venda-exemplo-id}}/payments",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7181",
+							"path": [
+								"api",
+								"Sales",
+								"{{venda-exemplo-id}}",
+								"payments"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Autenticar",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();\r",
+							"pm.globals.set(\"token-auth\", response.data.data.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "text/plain"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"eduardo@gmail.com\",\n  \"password\": \"E16vg800kpm!\"\n}"
+				},
+				"url": {
+					"raw": "https://localhost:7181/api/Auth",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7181",
+					"path": [
+						"api",
+						"Auth"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
