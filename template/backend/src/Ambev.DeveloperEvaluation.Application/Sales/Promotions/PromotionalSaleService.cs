@@ -18,27 +18,36 @@ public class PromotionalSaleService : IPromotionalSaleService
         Clear(sale);
 
         var referenceDate = DateTime.UtcNow;
-        foreach (var item in sale.Items.Where(item => !item.IsCanceled))
+        var activeItemsByProduct = sale.Items
+            .Where(item => !item.IsCanceled)
+            .GroupBy(item => item.ProductId);
+
+        foreach (var group in activeItemsByProduct)
         {
+            var groupedItems = group.ToList();
+            var totalQuantity = groupedItems.Sum(item => item.Quantity);
             var promotionItem = await _salesPromotionRepository.GetApplicableItemAsync(
-                item.ProductId,
-                item.Quantity,
+                group.Key,
+                totalQuantity,
                 referenceDate,
                 cancellationToken);
 
             if (promotionItem == null)
                 continue;
 
-            var discountAmount = CalculateDiscountAmount(item, promotionItem);
-            if (discountAmount > 0)
+            foreach (var item in groupedItems)
             {
-                item.ApplyDiscount(SaleItemAdjustmentType.Promotional, discountAmount);
-                continue;
-            }
+                var discountAmount = CalculateDiscountAmount(item, promotionItem);
+                if (discountAmount > 0)
+                {
+                    item.ApplyDiscount(SaleItemAdjustmentType.Promotional, discountAmount);
+                    continue;
+                }
 
-            var additionAmount = CalculateAdditionAmount(item, promotionItem);
-            if (additionAmount > 0)
-                item.ApplyAddition(SaleItemAdjustmentType.Promotional, additionAmount);
+                var additionAmount = CalculateAdditionAmount(item, promotionItem);
+                if (additionAmount > 0)
+                    item.ApplyAddition(SaleItemAdjustmentType.Promotional, additionAmount);
+            }
         }
 
         sale.RecalculateTotals();
