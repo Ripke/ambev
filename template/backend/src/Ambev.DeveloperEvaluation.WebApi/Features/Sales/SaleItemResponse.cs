@@ -19,4 +19,6 @@ public class SaleItemResponse
     public string? CancellationAuthorizerName { get; set; }
     public string? CancellationReason { get; set; }
     public DateTime SaleDateTime { get; set; }
+    public List<SaleItemDiscountResponse> Discounts { get; set; } = [];
+    public List<SaleItemAdditionResponse> Additions { get; set; } = [];
 }

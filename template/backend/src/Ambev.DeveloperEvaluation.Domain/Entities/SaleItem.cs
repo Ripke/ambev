@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.Domain.Common;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
@@ -20,6 +21,8 @@ public class SaleItem : BaseEntity
     public string? CancellationAuthorizerName { get; private set; }
     public string? CancellationReason { get; private set; }
     public DateTime SaleDateTime { get; private set; }
+    public List<SalesItemDiscount> Discounts { get; private set; } = [];
+    public List<SalesItemAddition> Additions { get; private set; } = [];
 
     public Sale Sale { get; private set; } = null!;
 
@@ -85,9 +88,41 @@ public class SaleItem : BaseEntity
         CancellationReason = string.IsNullOrWhiteSpace(reason) ? null : reason.Trim();
     }
 
+    public void ApplyDiscount(
+        AdditionDiscountTypes tipoDesconto,
+        decimal valor,
+        Guid? autorizadorId = null,
+        string? autorizadorName = null,
+        string? motivo = null)
+    {
+        EnsureCanChange();
+        Discounts.Add(SalesItemDiscount.Create(Id, tipoDesconto, valor, autorizadorId, autorizadorName, motivo));
+        RecalculateTotals();
+    }
+
+    public void ApplyAddition(
+        AdditionDiscountTypes tipo,
+        decimal valor,
+        Guid? autorizadorId = null,
+        string? autorizadorName = null,
+        string? motivo = null)
+    {
+        EnsureCanChange();
+        Additions.Add(SalesItemAddition.Create(Id, tipo, valor, autorizadorId, autorizadorName, motivo));
+        RecalculateTotals();
+    }
+
     private void RecalculateTotals()
     {
         Subtotal = Quantity * UnitPrice;
+        AdditionalAmountTotal = Additions.Sum(addition => addition.Valor);
+        DiscountAmountTotal = Discounts.Sum(discount => discount.Valor);
         Total = Subtotal + AdditionalAmountTotal - DiscountAmountTotal;
+    }
+
+    private void EnsureCanChange()
+    {
+        if (IsCanceled)
+            throw new InvalidOperationException("Canceled item cannot be changed.");
     }
 }

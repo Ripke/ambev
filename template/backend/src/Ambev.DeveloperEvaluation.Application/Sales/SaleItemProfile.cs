@@ -8,5 +8,7 @@ public class SaleItemProfile : Profile
     public SaleItemProfile()
     {
         CreateMap<SaleItem, SaleItemResult>();
+        CreateMap<SalesItemDiscount, SaleItemDiscountResult>();
+        CreateMap<SalesItemAddition, SaleItemAdditionResult>();
     }
 }

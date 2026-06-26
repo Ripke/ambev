@@ -6,7 +6,11 @@ using Ambev.DeveloperEvaluation.Application.Sales.GetSale;
 using Ambev.DeveloperEvaluation.Application.Sales.ReopenSale;
 using Ambev.DeveloperEvaluation.Application.Sales.SubtotalizeSale;
 using Ambev.DeveloperEvaluation.Application.Sales.AddSaleItem;
+using Ambev.DeveloperEvaluation.Application.Sales.ApplyManualSaleItemAddition;
+using Ambev.DeveloperEvaluation.Application.Sales.ApplyManualSaleItemDiscount;
 using Ambev.DeveloperEvaluation.Application.Sales.UpdateSaleItemQuantity;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.ApplyManualSaleItemAddition;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.ApplyManualSaleItemDiscount;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.AddSaleItem;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CancelSale;
@@ -177,6 +181,56 @@ public class SalesController : BaseController
             Success = true,
             Message = "Sale item canceled successfully",
             Data = _mapper.Map<CancelSaleItemResponse>(response)
+        });
+    }
+
+    [HttpPost("{saleId}/items/{itemId}/discounts/manual")]
+    [ProducesResponseType(typeof(ApiResponseWithData<ApplyManualSaleItemDiscountResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ApplyManualSaleItemDiscount([FromRoute] Guid saleId, [FromRoute] Guid itemId, [FromBody] ApplyManualSaleItemDiscountRequest request, CancellationToken cancellationToken)
+    {
+        request.SaleId = saleId;
+        request.ItemId = itemId;
+        var validator = new ApplyManualSaleItemDiscountRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+
+        var command = _mapper.Map<ApplyManualSaleItemDiscountCommand>(request);
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return Ok(new ApiResponseWithData<ApplyManualSaleItemDiscountResponse>
+        {
+            Success = true,
+            Message = "Manual sale item discount applied successfully",
+            Data = _mapper.Map<ApplyManualSaleItemDiscountResponse>(response)
+        });
+    }
+
+    [HttpPost("{saleId}/items/{itemId}/additions/manual")]
+    [ProducesResponseType(typeof(ApiResponseWithData<ApplyManualSaleItemAdditionResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ApplyManualSaleItemAddition([FromRoute] Guid saleId, [FromRoute] Guid itemId, [FromBody] ApplyManualSaleItemAdditionRequest request, CancellationToken cancellationToken)
+    {
+        request.SaleId = saleId;
+        request.ItemId = itemId;
+        var validator = new ApplyManualSaleItemAdditionRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+
+        var command = _mapper.Map<ApplyManualSaleItemAdditionCommand>(request);
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return Ok(new ApiResponseWithData<ApplyManualSaleItemAdditionResponse>
+        {
+            Success = true,
+            Message = "Manual sale item addition applied successfully",
+            Data = _mapper.Map<ApplyManualSaleItemAdditionResponse>(response)
         });
     }
 

@@ -118,6 +118,66 @@ public class SaleDomainTests
     }
 
     [Fact]
+    public void ApplyManualDiscount_ShouldRecalculateItemAndSaleTotals()
+    {
+        var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
+        var item = sale.AddItem("789", Guid.NewGuid(), "Produto", 2, 10);
+
+        item.ApplyDiscount(AdditionDiscountTypes.Manual, 3, Guid.NewGuid(), "Manager", "Ajuste");
+        sale.RecalculateTotals();
+
+        item.DiscountAmountTotal.Should().Be(3);
+        item.Total.Should().Be(17);
+        sale.DiscountAmountTotal.Should().Be(3);
+        sale.Total.Should().Be(17);
+    }
+
+    [Fact]
+    public void ApplyManualAddition_ShouldRecalculateItemAndSaleTotals()
+    {
+        var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
+        var item = sale.AddItem("789", Guid.NewGuid(), "Produto", 2, 10);
+
+        item.ApplyAddition(AdditionDiscountTypes.Manual, 4, Guid.NewGuid(), "Manager", "Ajuste");
+        sale.RecalculateTotals();
+
+        item.AdditionalAmountTotal.Should().Be(4);
+        item.Total.Should().Be(24);
+        sale.AdditionalAmountTotal.Should().Be(4);
+        sale.Total.Should().Be(24);
+    }
+
+    [Fact]
+    public void ApplyAdjustments_ShouldAccumulateTotals()
+    {
+        var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
+        var item = sale.AddItem("789", Guid.NewGuid(), "Produto", 2, 10);
+
+        item.ApplyDiscount(AdditionDiscountTypes.Manual, 2, Guid.NewGuid(), "Manager", "Ajuste");
+        item.ApplyDiscount(AdditionDiscountTypes.Promocional, 1, null, null, "Promo");
+        item.ApplyAddition(AdditionDiscountTypes.Manual, 5, Guid.NewGuid(), "Manager", "Ajuste");
+        sale.RecalculateTotals();
+
+        item.Discounts.Should().HaveCount(2);
+        item.Additions.Should().HaveCount(1);
+        item.DiscountAmountTotal.Should().Be(3);
+        item.AdditionalAmountTotal.Should().Be(5);
+        item.Total.Should().Be(22);
+        sale.Total.Should().Be(22);
+    }
+
+    [Fact]
+    public void ApplyAdjustment_WithInvalidValue_ShouldThrow()
+    {
+        var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
+        var item = sale.AddItem("789", Guid.NewGuid(), "Produto", 2, 10);
+
+        var act = () => item.ApplyDiscount(AdditionDiscountTypes.Manual, 0, Guid.NewGuid(), "Manager", "Ajuste");
+
+        act.Should().Throw<ArgumentException>();
+    }
+
+    [Fact]
     public void Subtotalize_WithoutActiveItems_ShouldThrow()
     {
         var sale = Sale.Create(Guid.NewGuid(), "Ambev", Guid.NewGuid(), "Maria");
