@@ -22,42 +22,6 @@ Este documento foi escrito a partir da implementacao atual do projeto. Sempre qu
 - API: `C:\Projetos\ambev\template\backend\src\Ambev.DeveloperEvaluation.WebApi`
 - Docker Compose: `C:\Projetos\ambev\template\backend\docker-compose.yml`
 
-### Opcao 1: subir com Docker Compose
-
-No diretorio `C:\Projetos\ambev\template\backend`, execute:
-
-```powershell
-docker compose up --build
-```
-
-O `docker-compose.yml` sobe estes servicos:
-
-- API Web
-- PostgreSQL
-- MongoDB
-- Redis
-
-As variaveis do banco definidas no compose sao:
-
-- Banco: `developer_evaluation`
-- Usuario: `developer`
-- Senha: `ev@luAt10n`
-
-### Opcao 2: subir o banco no Docker e a API localmente
-
-Se quiser rodar a API fora do container, use primeiro a infraestrutura:
-
-```powershell
-docker compose up ambev.developerevaluation.database -d
-```
-
-Depois inicie a API:
-
-```powershell
-cd C:\Projetos\ambev\template\backend
-dotnet restore
-dotnet run --project .\src\Ambev.DeveloperEvaluation.WebApi
-```
 
 ### URL da API e Swagger
 
@@ -74,6 +38,13 @@ Se a API subir com essa porta, o Swagger normalmente ficara em:
 ```text
 http://localhost:5119/swagger
 ```
+
+Para testar endpoints protegidos no Swagger:
+
+1. Execute `POST /api/Auth` e copie o valor de `data.token`.
+2. Clique em `Authorize` no canto superior da interface.
+3. Informe o JWT no campo exibido. Voce pode colar apenas o token ou usar `Bearer {token}`.
+4. Execute os endpoints protegidos; o Swagger enviara automaticamente o header `Authorization`.
 
 Se estiver usando Docker Compose, as portas HTTP e HTTPS do container sao 8080 e 8081, mas o mapeamento publicado pode ser dinamico. Verifique com:
 
